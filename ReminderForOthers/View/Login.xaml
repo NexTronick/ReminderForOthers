@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ReminderForOthers.Login"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
+    x:DataType="viewmodel:LoginViewModel"
+    BackgroundColor="White">
+    <StackLayout>
+
+        <Grid
+            Padding="10"
+            ColumnDefinitions="0.3*,0.7*"
+            RowDefinitions="auto,auto,auto,auto,auto"
+            RowSpacing="10">
+            <!--<BoxView
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                HeightRequest="100"
+                Color="Transparent" />-->
+            <Image
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                HorizontalOptions="Center"
+                WidthRequest="150">
+                <Image.Source>
+                    <FileImageSource>app_logo.png</FileImageSource>
+                </Image.Source>
+            </Image>
+            <BoxView MaximumHeightRequest="200" Color="Transparent" />
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                FontSize="15"
+                Text="Username:"
+                TextColor="Black"
+                VerticalTextAlignment="Center" />
+            <Border Grid.Row="1" Grid.Column="1">
+                <Entry
+                    IsPassword="False"
+                    Text="{Binding Username}"
+                    TextColor="Black" />
+            </Border>
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                FontSize="15"
+                Text="Password:"
+                TextColor="Black"
+                VerticalTextAlignment="Center" />
+            <Border Grid.Row="2" Grid.Column="1">
+                <Entry
+                    IsPassword="True"
+                    Text="{Binding Password}"
+                    TextColor="Black" />
+            </Border>
+            <Grid
+                Grid.Row="3"
+                Grid.ColumnSpan="2"
+                ColumnDefinitions="30,*,auto"
+                RowDefinitions="auto,auto">
+                <Grid
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    ColumnDefinitions="auto,auto">
+                    <CheckBox
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        HorizontalOptions="End"
+                        IsChecked="{Binding CheckBox}" />
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        HorizontalTextAlignment="Center"
+                        Text="Check the Box to save the account details."
+                        VerticalTextAlignment="Center">
+                        <Label.Triggers>
+                            <DataTrigger
+                                Binding="{Binding CheckBox}"
+                                TargetType="Label"
+                                Value="True">
+                                <Setter Property="FontAttributes" Value="Italic, Bold" />
+                                <Setter Property="FontSize" Value="18" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
+                </Grid>
+
+                <Grid
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    ColumnDefinitions="auto,auto">
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        FontSize="15"
+                        Text="If you haven't signed up."
+                        VerticalTextAlignment="Center" />
+
+
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Text="Sign Up Here"
+                        TextColor="{x:Reference Primary}"
+                        TextDecorations="Underline"
+                        VerticalTextAlignment="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="TapGestureRecognizer_SignUp" />
+                        </Label.GestureRecognizers>
+
+                    </Label>
+
+                </Grid>
+
+
+                <!--<Button  Text="Sign Up Now" Command="{Binding SignUpNowCommand}" />-->
+            </Grid>
+            <Button
+                Grid.Row="4"
+                Grid.ColumnSpan="2"
+                Command="{Binding LoginUserCommand}"
+                Text="Login" />
+            <Label
+                x:Name="showLabel"
+                Grid.Row="5"
+                Grid.ColumnSpan="2"
+                FontSize="15"
+                TextColor="Black" />
+        </Grid>
+        <BoxView VerticalOptions="FillAndExpand" Color="Transparent" />
+        <BoxView
+            HeightRequest="50"
+            VerticalOptions="End"
+            Color="Blue" />
+    </StackLayout>
+
+</ContentPage>
