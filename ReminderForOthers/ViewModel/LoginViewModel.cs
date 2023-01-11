@@ -32,7 +32,6 @@ public partial class LoginViewModel : ObservableObject
         if (loginValid == 1)
         {
             //store to cache for logged In status true, username of the user. in a new method
-
             //logged in
             await Shell.Current.GoToAsync(".."); //back to MainPage
         }

@@ -27,11 +27,6 @@ namespace ReminderForOthers.ViewModel
         public async void LoadData() 
         {
             reminders = await mainViewModel.GetRemindersAsync();
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    reminders.Add(new Reminder { Id = i, Date = DateTime.Now, Time = DateTime.Now.TimeOfDay, Title = "Brush Teeth", RecordPath = "d/d/d/d", ReminderCreationTime = DateTime.Now, UsernameFrom = "johnChan", UsernameTo = "nat" });
-            //}
-            
             ObserveReminders = new ObservableCollection<Reminder>(reminders);
             PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveReminders)));
         }
