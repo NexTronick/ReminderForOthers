@@ -5,8 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
     Title="Register Login Details"
-    x:DataType="viewmodel:SignUpViewModel"
-    BackgroundColor="White">
+    x:DataType="viewmodel:SignUpViewModel">
     <StackLayout>
         <Grid
             Padding="10"
@@ -32,9 +31,10 @@
                 <Label
                     Grid.Row="0"
                     Grid.Column="1"
-                    FontSize="30"
+                    FontSize="25"
                     HorizontalTextAlignment="Center"
                     Text="| Register Account"
+                    TextColor="Black"
                     VerticalTextAlignment="Center" />
             </Grid>
             <!--<BoxView

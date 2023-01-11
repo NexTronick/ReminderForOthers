@@ -4,72 +4,192 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
-    x:DataType="viewmodel:MainViewModel"
-    BackgroundColor="White">
+    x:DataType="viewmodel:MainViewModel">
 
-    <StackLayout>
+    <ScrollView>
+        <StackLayout>
 
-        <Grid
-            Padding="10"
-            ColumnDefinitions="0.35*,0.45*,0.2*"
-            RowDefinitions="auto,auto,auto,auto,auto"
-            RowSpacing="10">
-            <Label
+            <Grid
+                Margin="10"
+                ColumnDefinitions="auto,auto"
+                ColumnSpacing="100"
+                HorizontalOptions="Center"
+                RowDefinitions="auto">
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="5,10,15,0"
+                    FontSize="17"
+                    Text="My Reminders"
+                    TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding CheckMyRemindersCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="5,10,15,0"
+                    FontAttributes="Italic"
+                    FontSize="18"
+                    HorizontalOptions="End"
+                    Text="Logout"
+                    TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutUserCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+            </Grid>
+
+
+
+            <Grid
+                Padding="10"
+                ColumnDefinitions="0.35*,0.45*,0.2*"
+                RowDefinitions="auto,auto,auto,auto,auto,auto,auto"
+                RowSpacing="20">
+                <Grid
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Padding="50,0,50,0"
+                    ColumnDefinitions="0.3*,0.7*"
+                    HorizontalOptions="Center"
+                    RowDefinitions="auto">
+
+                    <Image
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        HorizontalOptions="Center"
+                        WidthRequest="140">
+                        <Image.Source>
+                            <FileImageSource>app_logo.png</FileImageSource>
+                        </Image.Source>
+                    </Image>
+                    <Label
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        FontSize="35"
+                        HorizontalTextAlignment="Center"
+                        Text="| Reminder"
+                        VerticalTextAlignment="Center" />
+                </Grid>
+                <!--<Label
                 Grid.ColumnSpan="3"
                 FontSize="30"
                 HorizontalOptions="Center"
                 Text="Reminder"
-                TextColor="Black"
-                VerticalTextAlignment="Center" />
-            <Label
-                Grid.Row="1"
-                Grid.Column="0"
-                FontSize="15"
-                Text="Title: "
-                TextColor="Black"
-                VerticalTextAlignment="Center" />
-            <Border
-                Grid.Row="1"
-                Grid.Column="1"
-                Grid.ColumnSpan="2">
-                <Entry Text="{Binding Title}" TextColor="Black" />
-            </Border>
-            <Label
-                Grid.Row="2"
-                Grid.Column="0"
-                FontSize="15"
-                Text="Date and Time:"
-                TextColor="Black"
-                VerticalTextAlignment="Center" />
-            <Border Grid.Row="2" Grid.Column="1">
-                <DatePicker
-                    Date="{Binding SelectedDate.Date}"
-                    MaximumDate="{Binding SelectedDate.MaximumDate}"
-                    MinimumDate="{Binding SelectedDate.MinimumDate}" />
-            </Border>
-            <Border Grid.Row="2" Grid.Column="2">
-                <TimePicker Time="{Binding SelectedTime.Time}" />
-            </Border>
-            <Label
-                Grid.Row="3"
-                Grid.Column="0"
-                FontSize="15"
-                Text="Voice Memo:"
-                VerticalTextAlignment="Center" />
-            <Button
-                Grid.Row="3"
-                Grid.Column="1"
-                Grid.ColumnSpan="2"
-                Command="{Binding RecordCommand}"
-                Text="Record" />
-            <Button
-                Grid.Row="4"
-                Grid.ColumnSpan="3"
-                BackgroundColor="{x:Reference Primary}"
-                Command="{Binding SetReminderCommand}"
-                Text="Set Reminder" />
-        </Grid>
-    </StackLayout>
+                VerticalTextAlignment="Center" />-->
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    FontSize="15"
+                    Text="Recipient Username: "
+                    VerticalTextAlignment="Center" />
+                <Border
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2">
+                    <Entry Text="{Binding UserTo}" />
+                </Border>
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    FontSize="15"
+                    Text="Title: "
+                    VerticalTextAlignment="Center" />
+                <Border
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2">
+                    <Entry Text="{Binding Title}" />
+                </Border>
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    FontSize="15"
+                    Text="Date and Time:"
+                    VerticalTextAlignment="Center" />
+                <Border Grid.Row="3" Grid.Column="1">
+                    <DatePicker
+                        Date="{Binding SelectedDate.Date}"
+                        MaximumDate="{Binding SelectedDate.MaximumDate}"
+                        MinimumDate="{Binding SelectedDate.MinimumDate}" />
+                </Border>
+                <Border Grid.Row="3" Grid.Column="2">
+                    <TimePicker Time="{Binding SelectedTime.Time}" />
+                </Border>
+                <Label
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    FontSize="15"
+                    Text="Record Voice Memo:"
+                    VerticalTextAlignment="Center" />
+                <Grid
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    ColumnDefinitions="*,*,*"
+                    ColumnSpacing="10"
+                    RowDefinitions="auto">
+
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Command="{Binding RecordCommand}"
+                        FontSize="15"
+                        Text="Start" />
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Command="{Binding StopRecordCommand}"
+                        FontSize="15"
+                        Text="Stop" />
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Command="{Binding DisposeRecordAudioCommand}"
+                        FontSize="15"
+                        Text="Reset" />
+                </Grid>
+                <Label
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    FontSize="15"
+                    Text="Recorded Memo:"
+                    VerticalTextAlignment="Center" />
+                <Grid
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Grid.ColumnSpan="2"
+                    ColumnDefinitions="*,*"
+                    ColumnSpacing="15"
+                    RowDefinitions="auto">
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Command="{Binding PlayRecordedAudioCommand}"
+                        FontSize="15"
+                        Text="Play" />
+                    <Button
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Command="{Binding PauseRecordedAudioCommand}"
+                        FontSize="15"
+                        Text="Pause" />
+                </Grid>
+                <Button
+                    Grid.Row="6"
+                    Grid.ColumnSpan="3"
+                    BackgroundColor="{x:Reference Primary}"
+                    Command="{Binding SetReminderCommand}"
+                    FontSize="18"
+                    Text="Set Reminder" />
+            </Grid>
+
+        </StackLayout>
+    </ScrollView>
 
 
 </ContentPage>

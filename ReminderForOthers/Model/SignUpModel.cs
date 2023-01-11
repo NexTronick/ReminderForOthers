@@ -1,13 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+using Microsoft.Maui.Storage;
+
 using System.Net.Mail;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+
 
 namespace ReminderForOthers.Model
 {
@@ -21,13 +16,16 @@ namespace ReminderForOthers.Model
         public string Password { get; set; }
     }
 
+
+
     public class SignUpModel
     {
         //variables
         User user;
-        private string jsonUser;
-        private readonly string FILENAME = "Users.json";
-        //constructor
+        private readonly string FILENAME = "Users.txt";
+        //constructors
+        public SignUpModel() { }
+
         public SignUpModel(string lName, string fName, string birthDate, string username, MailAddress email, string password)
         {
             //settings all the values for user
@@ -43,23 +41,15 @@ namespace ReminderForOthers.Model
         //store the file into the local database.
         public async Task StoreUser()
         {
-            IDictionary<string, User> userDict = new Dictionary<string, User>();
-            userDict.Add(user.Username, user);
-            jsonUser = JsonConvert.SerializeObject(userDict);
-            string mainDir = FileSystem.Current.AppDataDirectory;
-            mainDir = Path.Combine(mainDir, FILENAME);
-            var outputStream = File.OpenWrite(mainDir);
-            var streamWriter = new StreamWriter(outputStream);
-            streamWriter.Write(jsonUser);
+            //store local
+            await StoreUserLocal();
 
-            Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(mainDir);
-            StreamReader reader = new StreamReader(fileStream);
+            //store cloud
 
-            string content = await reader.ReadToEndAsync();
 
-            IDictionary<string, User> userDictCheck = JsonConvert.DeserializeObject<IDictionary<string, User>>(content);
+            IDictionary<string, User> userDict = await GetUsersLocally();
 
-            foreach (var userInfo in userDictCheck)
+            foreach (var userInfo in userDict)
             {
                 string username = userInfo.Key;
                 User userDetails = userInfo.Value;
@@ -67,66 +57,67 @@ namespace ReminderForOthers.Model
                 Console.WriteLine($"Details: {userDetails.LastName}, {userDetails.FirstName}, {userDetails.BirthDate} ,{userDetails.Username},{userDetails.Email},{userDetails.Password}");
             }
 
-            Console.WriteLine(jsonUser);
         }
 
-        private async Task AppendUserLocally()
+        //to get main directory of file
+        public string GetFullPath()
         {
-            string mainDir = FileSystem.Current.AppDataDirectory;
-
-            // Write the file content to the app data directory
-            //string targetFile = System.IO.Path.Combine(FileSystem.Current.AppDataDirectory, targetFileName);
-
-            //FileStream outputStream = System.IO.File.OpenWrite(targetFile);
-            //StreamWriter streamWriter = new StreamWriter(outputStream);
-
-            //await streamWriter.WriteAsync(content);
+            return Path.Combine(FileSystem.Current.AppDataDirectory, FILENAME);
         }
 
-        //public async Task<IDictionary<string, User>> GetLocalUsers()
-        //{
-        //    // Read the source file
-        //    IDictionary<string, User> userDict = null;
-        //    try
-        //    {
-        //        string targetFile = System.IO.Path.Combine(FileSystem.Current.AppDataDirectory, FILENAME);
-        //        Console.WriteLine($"Path: {targetFile}");
-        //        bool fileExists = await FileSystem.Current.AppPackageFileExistsAsync(targetFile);
-        //        Console.WriteLine($"File Exists: {fileExists}");
-        //        if (!fileExists)
-        //        {
-        //            FileStream outputStream = File.OpenWrite(targetFile);
-        //            StreamWriter streamWriter = new StreamWriter(outputStream);
+        //store user in the local device
+        private async Task StoreUserLocal()
+        {
+            //read the file
+            string mainDir = GetFullPath();
+            //File.Delete(mainDir);
+            //if file doesnt exits then create file
+            if (!File.Exists(mainDir))
+            {
+                await File.WriteAllTextAsync(mainDir, "");
+            }
 
-        //            await streamWriter.WriteAsync("");
-        //        }
-        //        fileExists = await FileSystem.Current.AppPackageFileExistsAsync(targetFile);
-        //        Console.WriteLine($"File Exists: {fileExists}");
-        //        //Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync(mainDir);
-        //        //StreamReader reader = new StreamReader(fileStream);
+            //add user
+            await AddUserLocally();
+        }
 
-        //        //string content = await reader.ReadToEndAsync();
+        //add users locally 
+        private async Task AddUserLocally()
+        {
+            IDictionary<string, User> users = await GetUsersLocally();
+            users.Add(user.Username, user);
+            string jsonUsers = JsonConvert.SerializeObject(users);
+            await File.WriteAllTextAsync(GetFullPath(), jsonUsers);
+        }
 
-        //        //userDict = JsonConvert.DeserializeObject<IDictionary<string, User>>(content);
+        public async Task<IDictionary<string, User>> GetUsersLocally()
+        {
+            string mainDir = GetFullPath();
+            if (!File.Exists(mainDir)) { File.WriteAllText(mainDir, ""); }
+            string content = await File.ReadAllTextAsync(mainDir);
+            if (string.IsNullOrEmpty(content))
+            {
+                return new Dictionary<string, User>();
+            }
+            return JsonConvert.DeserializeObject<IDictionary<string, User>>(content);
+        }
 
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine($"Error in GetLocalUsers: {e}");
-        //    }
-        //    return userDict;
+        //true or false (validation)
+        public async Task<bool> DoesUserExitsAsync(string username)
+        {
 
-        //    //string username = "";
+            IDictionary<string, User> userDict = await GetUsersLocally();
+            return userDict.ContainsKey(username); ; //false (doesnt exists)
+        }
+        public async Task<int> ValidatePasswordAsync(string username, string password)
+        {   
+            IDictionary<string, User> userDict = await GetUsersLocally();
+            if (!userDict.ContainsKey(username)) { return -1; }
+            userDict.TryGetValue(username, out User userInfo);
+            if (userInfo.Password.Equals(password)) { return 1; }
+            return 0;
+        }
 
-        //    //foreach (var userInfo in userDict)
-        //    //{
-        //    //    string username = userInfo.Key;
-        //    //    User userDetails = userInfo.Value;
-        //    //    Console.WriteLine($"User: {username}");
-        //    //    Console.WriteLine($"Details: {userDetails.LastName}, {userDetails.FirstName}, {userDetails.BirthDate} ,{userDetails.Username},{userDetails.Email},{userDetails.Password}");
-        //    //}
-
-        //}
         public void FireBaseStoreDB()
         {
 

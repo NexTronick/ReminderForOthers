@@ -4,8 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
-    x:DataType="viewmodel:LoginViewModel"
-    BackgroundColor="White">
+    x:DataType="viewmodel:LoginViewModel">
     <StackLayout>
 
         <Grid
@@ -36,26 +35,18 @@
                 Grid.Column="0"
                 FontSize="15"
                 Text="Username:"
-                TextColor="Black"
                 VerticalTextAlignment="Center" />
             <Border Grid.Row="1" Grid.Column="1">
-                <Entry
-                    IsPassword="False"
-                    Text="{Binding Username}"
-                    TextColor="Black" />
+                <Entry IsPassword="False" Text="{Binding Username}" />
             </Border>
             <Label
                 Grid.Row="2"
                 Grid.Column="0"
                 FontSize="15"
                 Text="Password:"
-                TextColor="Black"
                 VerticalTextAlignment="Center" />
             <Border Grid.Row="2" Grid.Column="1">
-                <Entry
-                    IsPassword="True"
-                    Text="{Binding Password}"
-                    TextColor="Black" />
+                <Entry IsPassword="True" Text="{Binding Password}" />
             </Border>
             <Grid
                 Grid.Row="3"
@@ -79,15 +70,9 @@
                         HorizontalTextAlignment="Center"
                         Text="Check the Box to save the account details."
                         VerticalTextAlignment="Center">
-                        <Label.Triggers>
-                            <DataTrigger
-                                Binding="{Binding CheckBox}"
-                                TargetType="Label"
-                                Value="True">
-                                <Setter Property="FontAttributes" Value="Italic, Bold" />
-                                <Setter Property="FontSize" Value="18" />
-                            </DataTrigger>
-                        </Label.Triggers>
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding CheckBoxTickCommand}" />
+                        </Label.GestureRecognizers>
                     </Label>
                 </Grid>
 
@@ -100,15 +85,13 @@
                         Grid.Row="0"
                         Grid.Column="0"
                         FontSize="15"
-                        Text="If you haven't signed up."
+                        Text="If you haven't signed up. "
                         VerticalTextAlignment="Center" />
-
 
                     <Label
                         Grid.Row="0"
                         Grid.Column="1"
                         Text="Sign Up Here"
-                        TextColor="{x:Reference Primary}"
                         TextDecorations="Underline"
                         VerticalTextAlignment="Center">
                         <Label.GestureRecognizers>
@@ -125,20 +108,23 @@
             <Button
                 Grid.Row="4"
                 Grid.ColumnSpan="2"
+                Margin="5,15,5,5"
+                Padding="10,10,10,10"
                 Command="{Binding LoginUserCommand}"
+                FontSize="18"
                 Text="Login" />
-            <Label
+            <!--<Label
                 x:Name="showLabel"
                 Grid.Row="5"
                 Grid.ColumnSpan="2"
                 FontSize="15"
-                TextColor="Black" />
+                 />-->
         </Grid>
-        <BoxView VerticalOptions="FillAndExpand" Color="Transparent" />
+        <!--<BoxView VerticalOptions="FillAndExpand" Color="Transparent" />
         <BoxView
             HeightRequest="50"
             VerticalOptions="End"
-            Color="Blue" />
+            Color="Blue" />-->
     </StackLayout>
 
 </ContentPage>

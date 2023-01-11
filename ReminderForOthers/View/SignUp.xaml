@@ -5,8 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
     Title="Register Personal Details"
-    x:DataType="viewmodel:SignUpViewModel"
-    BackgroundColor="White">
+    x:DataType="viewmodel:SignUpViewModel">
 
     <StackLayout>
         <Grid
@@ -33,7 +32,7 @@
                 <Label
                     Grid.Row="0"
                     Grid.Column="1"
-                    FontSize="30"
+                    FontSize="25"
                     HorizontalTextAlignment="Center"
                     Text="| Register Account"
                     VerticalTextAlignment="Center" />
@@ -143,71 +142,7 @@
                 Command="{Binding NextPageCommand}"
                 Text="Next" />
 
-            <!--<Label
-                Grid.Row="3"
-                Grid.Column="0"
-                FontSize="16"
-                Text="Username:"
-                VerticalTextAlignment="Center" />
-            <Border
-                Grid.Row="3"
-                Grid.Column="1"
-                Margin="5"
-                VerticalOptions="Center">
-                <Entry Text="{Binding Username}" VerticalOptions="Center" />
-            </Border>
-            <Label
-                Grid.Row="4"
-                Grid.Column="0"
-                FontSize="16"
-                Text="Email:"
-                VerticalTextAlignment="Center" />
-            <Border
-                Grid.Row="4"
-                Grid.Column="1"
-                Margin="5"
-                VerticalOptions="Center">
-                <Entry Text="{Binding Email}" VerticalOptions="Center" />
-            </Border>
-            <Label
-                Grid.Row="5"
-                Grid.Column="0"
-                FontSize="16"
-                Text="Password:"
-                VerticalTextAlignment="Center" />
-            <Border
-                Grid.Row="5"
-                Grid.Column="1"
-                Margin="5"
-                VerticalOptions="Center">
-                <Entry
-                    IsPassword="True"
-                    Text="{Binding Password}"
-                    VerticalOptions="Center" />
-            </Border>
-            <Label
-                Grid.Row="6"
-                Grid.Column="0"
-                FontSize="16"
-                Text="Confirm Password:"
-                VerticalTextAlignment="Center" />
-            <Border
-                Grid.Row="6"
-                Grid.Column="1"
-                Margin="5"
-                VerticalOptions="Center">
-                <Entry
-                    IsPassword="True"
-                    Text="{Binding RePassword}"
-                    VerticalOptions="Center" />
-            </Border>
 
-            <Button
-                Grid.Row="7"
-                Grid.ColumnSpan="2"
-                Margin="0,20,0,0"
-                Command="{Binding RegisterUserCommand}"
-                Text="Register" />-->
         </Grid>
     </StackLayout>
     <!--  https://learn.microsoft.com/en-us/dotnet/maui/fundamentals/shell/navigation  -->
