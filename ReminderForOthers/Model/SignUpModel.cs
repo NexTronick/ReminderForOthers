@@ -22,9 +22,23 @@ namespace ReminderForOthers.Model
     {
         //variables
         User user;
+
+        
+
         private readonly string FILENAME = "Users.txt";
+        //local directory
+        private string mainDir;
+        IDictionary<string, User> usersLocal;
+
+
+        //cloud directory
+
         //constructors
-        public SignUpModel() { }
+        public SignUpModel()
+        {
+            mainDir = Path.Combine(FileSystem.Current.AppDataDirectory, FILENAME);
+            usersLocal = new Dictionary<string, User>();
+        }
 
         public SignUpModel(string lName, string fName, string birthDate, string username, MailAddress email, string password)
         {
@@ -36,63 +50,59 @@ namespace ReminderForOthers.Model
             user.Username = username;
             user.Email = email.Address;
             user.Password = password;
+
+            mainDir = Path.Combine(FileSystem.Current.AppDataDirectory, FILENAME);
+            usersLocal = new Dictionary<string, User>();
         }
 
         //store the file into the local database.
-        public async Task StoreUser()
+        //returns 3 status, -1 email exists, 0 username exists, 1 user created
+        public async Task<int> StoreUserAsync()
         {
             //store local
-            await StoreUserLocal();
+
+            //setting local user
+            usersLocal = await GetUsersLocallyAsync();
+            int storeUser = await StoreUserLocalAsync();
+
 
             //store cloud
 
-
-            IDictionary<string, User> userDict = await GetUsersLocally();
-
-            foreach (var userInfo in userDict)
-            {
-                string username = userInfo.Key;
-                User userDetails = userInfo.Value;
-                Console.WriteLine($"User: {username}");
-                Console.WriteLine($"Details: {userDetails.LastName}, {userDetails.FirstName}, {userDetails.BirthDate} ,{userDetails.Username},{userDetails.Email},{userDetails.Password}");
-            }
+            //print current users
+            //foreach (var userInfo in usersLocal)
+            //{
+            //    string username = userInfo.Key;
+            //    User userDetails = userInfo.Value;
+            //    Console.WriteLine($"User: {username}");
+            //    Console.WriteLine($"Details: {userDetails.LastName}, {userDetails.FirstName}, {userDetails.BirthDate} ,{userDetails.Username},{userDetails.Email},{userDetails.Password}");
+            //}
+            return storeUser;
 
         }
 
-        //to get main directory of file
-        public string GetFullPath()
-        {
-            return Path.Combine(FileSystem.Current.AppDataDirectory, FILENAME);
-        }
-
-        //store user in the local device
-        private async Task StoreUserLocal()
+        //store user in the local device [1 doesnt exists,0 username, -1 email]
+        private async Task<int> StoreUserLocalAsync()
         {
             //read the file
-            string mainDir = GetFullPath();
-            //File.Delete(mainDir);
             //if file doesnt exits then create file
             if (!File.Exists(mainDir))
             {
                 await File.WriteAllTextAsync(mainDir, "");
             }
 
-            //add user
-            await AddUserLocally();
+            //check if user already exists locally
+            int userExists = DoesUserExistsAsync(user.Username, user.Email);
+            if (userExists < 1) { return userExists; } //username or email exists
+
+            //add user locally
+            usersLocal.Add(user.Username, user);
+            string jsonUsers = JsonConvert.SerializeObject(usersLocal);
+            await File.WriteAllTextAsync(mainDir, jsonUsers);
+            return userExists;
         }
 
-        //add users locally 
-        private async Task AddUserLocally()
+        public async Task<IDictionary<string, User>> GetUsersLocallyAsync()
         {
-            IDictionary<string, User> users = await GetUsersLocally();
-            users.Add(user.Username, user);
-            string jsonUsers = JsonConvert.SerializeObject(users);
-            await File.WriteAllTextAsync(GetFullPath(), jsonUsers);
-        }
-
-        public async Task<IDictionary<string, User>> GetUsersLocally()
-        {
-            string mainDir = GetFullPath();
             if (!File.Exists(mainDir)) { File.WriteAllText(mainDir, ""); }
             string content = await File.ReadAllTextAsync(mainDir);
             if (string.IsNullOrEmpty(content))
@@ -102,16 +112,36 @@ namespace ReminderForOthers.Model
             return JsonConvert.DeserializeObject<IDictionary<string, User>>(content);
         }
 
+        //checks if user exits [1 doesnt exists,0 username, -1 email]
+        private int DoesUserExistsAsync(string username, string email)
+        {
+            //username exists
+            if (usersLocal.ContainsKey(username)) { return 0; }
+            foreach (var userInfo in usersLocal)
+            {
+                User userDetails = userInfo.Value;
+                //email exists
+                if (userDetails.Email == email)
+                {
+                    return -1;
+                }
+            }
+            return 1; //doesnt exists
+
+        }
+
         //true or false (validation)
-        public async Task<bool> DoesUserExitsAsync(string username)
+        public async Task<bool> DoesUserNameExitsAsync(string username)
         {
 
-            IDictionary<string, User> userDict = await GetUsersLocally();
-            return userDict.ContainsKey(username); ; //false (doesnt exists)
+            IDictionary<string, User> userDict = await GetUsersLocallyAsync();
+            return userDict.ContainsKey(username); //false (doesnt exists)
         }
+
+        //returns [-1 username doesnt exits, 0 password wrong, 1 password correct ] 
         public async Task<int> ValidatePasswordAsync(string username, string password)
-        {   
-            IDictionary<string, User> userDict = await GetUsersLocally();
+        {
+            IDictionary<string, User> userDict = await GetUsersLocallyAsync();
             if (!userDict.ContainsKey(username)) { return -1; }
             userDict.TryGetValue(username, out User userInfo);
             if (userInfo.Password.Equals(password)) { return 1; }

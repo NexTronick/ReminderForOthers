@@ -105,17 +105,30 @@ public partial class SignUpViewModel : ObservableObject
 
     //for registering the user
     [RelayCommand]
-    void RegisterUser()
+    async Task RegisterUser()
     {
 
         //validate 
         if (!ValidateAll()) return;
 
         //set to database
-        if (!SetUser()) return;
+        int userStored = await SetUser();
+        if (userStored == -1)
+        {
+            await Shell.Current.DisplayAlert("User Registration Failed!", "Email already exists, please use new email.", "Okay");
+            return;
+        }
+        else if (userStored == 0)
+        {
+            await Shell.Current.DisplayAlert("User Registration Failed!", "Username already exists, please use new username.", "Okay");
+            return;
+        }
 
         //move to login page
-        Task t = HasAccountFromSignUpNext();
+        if (userStored == 1) {
+            await Shell.Current.DisplayAlert("User Registered!", "User has been registered, Login Now.", "Okay");
+        }
+       await HasAccountFromSignUpNext();
     }
 
     [RelayCommand]
@@ -125,15 +138,15 @@ public partial class SignUpViewModel : ObservableObject
     }
 
 
-    bool SetUser()
+    private async Task<int> SetUser()
     {
-        SignUpModel signUpModel = new SignUpModel(lastName,firstName, birthDate.Date.ToString(), username,new MailAddress(email),password);
-        Task t = signUpModel.StoreUser();
+        SignUpModel signUpModel = new SignUpModel(lastName, firstName, birthDate.Date.ToString(), username, new MailAddress(email), password);
+        int stored = await signUpModel.StoreUserAsync();
         //test json deserilize
         //Task<IDictionary<string,User>> userData= signUpModel.GetLocalUsers();
-        return true;
+        return stored;
     }
-    
+
 
     bool ValidateAll()
     {
