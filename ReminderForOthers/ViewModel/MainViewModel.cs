@@ -49,22 +49,26 @@ public partial class MainViewModel : ObservableObject
 
         //record audio
         //record the voice
-        await recordModel.RecordAudioAsync();
-
-
-
+        bool record = await recordModel.RecordAudioAsync();
+        if (!record) {
+            await Shell.Current.DisplayAlert("Media Record Failed!", "The media may Have already started the recording. Try hitting the Reset button, before clicking on Record.", "Okay");
+        }
     }
 
     [RelayCommand]
     async Task StopRecord()
     {
-        await recordModel.StopRecordAudioAsync();
+        bool record = await recordModel.StopRecordAudioAsync();
+        if (!record)
+        {
+            await Shell.Current.DisplayAlert("Media Record Failed!", "The media may Not Have started the recording. Try hitting the Reset button, before clicking on Record.", "Okay");
+        }
     }
 
     [RelayCommand]
     async Task DisposeRecordAudio()
     {
-        await recordModel.DisposeAudio();
+        await recordModel.DisposeAudioAsync();
     }
 
     [RelayCommand]

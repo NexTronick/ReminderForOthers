@@ -23,11 +23,11 @@ public partial class MainPage : ContentPage
         Console.WriteLine("OnAppearing");
         Task login = ((MainViewModel)BindingContext).GotoLoginPageCommand.ExecuteAsync(this);
         Console.WriteLine("Finished Appearing On MainPage");
-        Task remind = SetNotifications();
+        Task remind = SetNotificationsAsync();
 
     }
 
-    protected async Task SetNotifications()
+    protected async Task SetNotificationsAsync()
     {
         List<Reminder> reminders = await ((MainViewModel)BindingContext).GetRemindersAsync();
         if (reminders == null) { return;  }
