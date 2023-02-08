@@ -4,6 +4,7 @@ using ReminderForOthers.Model;
 using System.Net.Mail;
 using ReminderForOthers.View;
 using System.Diagnostics.Tracing;
+using System.Text.RegularExpressions;
 
 namespace ReminderForOthers.ViewModel;
 
@@ -35,8 +36,8 @@ public partial class SignUpViewModel : ObservableObject
 
         //set dates
         birthDate = new DatePicker();
-        birthDate.MaximumDate = DateTime.Today;
-        birthDate.MinimumDate = new DateTime(DateTime.Today.Year - 100, 1, 1); //support until 100 years old}
+        birthDate.MaximumDate = new DateTime(DateTime.Today.Year - 3, DateTime.Today.Month, DateTime.Today.Day); //minimum 3 years old.
+        birthDate.MinimumDate = new DateTime(DateTime.Today.Year - 100, DateTime.Today.Month, DateTime.Today.Day); //support until 100 years old}
     }
 
 
@@ -59,14 +60,14 @@ public partial class SignUpViewModel : ObservableObject
         firstName = ValidateStringVariable(firstName);
         if (firstName == null)
         {
-            ShowError("Field Incomplete", "First Name is not filled in!");
+            ShowError("Field Incomplete", "One of the followings: \nFirst Name is not filled in! \nFirst Name is not between 1-32 characters (no digit or speical character is allowed).");
             return false;
         }
 
         lastName = ValidateStringVariable(LastName);
         if (LastName == null)
         {
-            ShowError("Field Incomplete", "Last Name is not filled in!");
+            ShowError("Field Incomplete", "One of the followings: \nLast Name is not filled in! \nLast Name is not between 1-32 characters (no digit or speical character is allowed).");
             return false;
         }
         //validate the date using Nullable
@@ -92,7 +93,12 @@ public partial class SignUpViewModel : ObservableObject
         if (string.IsNullOrEmpty(val)) { return null; }
         string temp = val.Trim();
         if (temp.Equals("")) { return null; }
+        if (temp.Length > 32) { return null; }
+        string regex = @"^[A-Za-z\s]*$";
+        Match match = Regex.Match(temp, regex);
+        if (!match.Success) { return null; } //checks for only letters
         return temp;
+
     }
 
     [RelayCommand]
@@ -125,10 +131,11 @@ public partial class SignUpViewModel : ObservableObject
         }
 
         //move to login page
-        if (userStored == 1) {
+        if (userStored == 1)
+        {
             await Shell.Current.DisplayAlert("User Registered!", "User has been registered, Login Now.", "Okay");
         }
-       await HasAccountFromSignUpNext();
+        await HasAccountFromSignUpNext();
     }
 
     [RelayCommand]
@@ -150,25 +157,36 @@ public partial class SignUpViewModel : ObservableObject
 
     bool ValidateAll()
     {
-        bool isValidate = false;
-        isValidate = IsUserValid();
-        isValidate = IsEmailValid();
-        isValidate = IsPasswordValid();
-        Console.WriteLine($"Alert Displayed: {!isValidate}");
-        return isValidate;
+
+        if (!IsUserValid()) { return false; }
+        if (!IsEmailValid()) { return false; }
+        if (!IsPasswordValid()) { return false; }
+        return true;
+    }
+
+    bool CheckForSpecialChar(string val)
+    {
+        return val.Any(ch => !char.IsLetterOrDigit(ch));
     }
 
     bool IsUserValid()
     {
-        username = ValidateStringVariable(username);
-        if (username == null)
+        if (string.IsNullOrEmpty(username))
         {
-            ShowError("Field Incomplete", "Username is not filled in!");
+            ShowError("Field Incorrect", "Username is not filled in!");
             return false;
         }
-
-        //add validation with the database using the model here.
-
+        username = username.Trim();
+        if (username.Length < 4 || username.Length > 16)
+        {
+            ShowError("Field Incorrect", "Username is not in the range of 4-16 characters!");
+            return false;
+        }
+        if (CheckForSpecialChar(username)) 
+        {
+            ShowError("Field Incorrect", "Username should have Letters and Numbers only.");
+            return false;
+        }
         return true;
     }
 
@@ -181,7 +199,7 @@ public partial class SignUpViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            App.Current.MainPage.DisplayAlert("Email not recognized", ex.Message + "\nThe e-mail address should look like example@gmail.com.", "Okay");
+            ShowError("Email not recognized", $"{ex.Message}\nThe e-mail address should look like example@gmail.com.");
             return false;
         }
     }
@@ -192,7 +210,13 @@ public partial class SignUpViewModel : ObservableObject
             || password.Length < 8
             || !password.Equals(rePassword))
         {
-            App.Current.MainPage.DisplayAlert("Password not recognized", "Either one of the following is the cause: \nPassword is not field filled. \nPassword is not at least 8 characters. \nConfirm Password is not same as Password.", "Okay");
+            ShowError("Password not recognized", "Either one of the following is the cause: \nPassword is not filled in. \nPassword is not at least 8 characters. \nConfirm Password is not same as Password.");
+            return false;
+        }
+        string regex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$";
+        Match match = Regex.Match(password, regex);
+        if (!match.Success) {
+            ShowError("Password not recognized", "Password is not at least 8-16 Characters, 1 Upper case and 1 Lower case Letter, and 1 Number");
             return false;
         }
 

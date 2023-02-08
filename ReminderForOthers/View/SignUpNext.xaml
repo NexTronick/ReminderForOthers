@@ -37,14 +37,6 @@
                     TextColor="Black"
                     VerticalTextAlignment="Center" />
             </Grid>
-            <!--<BoxView
-                Grid.Row="0"
-                Grid.ColumnSpan="2"
-                BackgroundColor="Transparent"
-                HeightRequest="50"
-                VerticalOptions="FillAndExpand"
-                Color="Transparent" />-->
-
             <Label
                 Grid.Row="1"
                 Grid.Column="0"
@@ -56,7 +48,10 @@
                 Grid.Column="1"
                 Margin="5"
                 VerticalOptions="Center">
-                <Entry Text="{Binding Username}" VerticalOptions="Center" />
+                <Entry
+                    Placeholder="Min 4 and Max 16 characters"
+                    Text="{Binding Username}"
+                    VerticalOptions="Center" />
             </Border>
             <Label
                 Grid.Row="2"
@@ -69,7 +64,10 @@
                 Grid.Column="1"
                 Margin="5"
                 VerticalOptions="Center">
-                <Entry Text="{Binding Email}" VerticalOptions="Center" />
+                <Entry
+                    Placeholder="eg. username@example.com"
+                    Text="{Binding Email}"
+                    VerticalOptions="Center" />
             </Border>
             <Label
                 Grid.Row="3"
@@ -83,7 +81,9 @@
                 Margin="5"
                 VerticalOptions="Center">
                 <Entry
+                    FontSize="15"
                     IsPassword="True"
+                    Placeholder="eg. Password1!"
                     Text="{Binding Password}"
                     VerticalOptions="Center" />
             </Border>
@@ -99,12 +99,23 @@
                 Margin="5"
                 VerticalOptions="Center">
                 <Entry
+                    FontSize="15"
                     IsPassword="True"
+                    Placeholder="eg. Password1!"
                     Text="{Binding RePassword}"
                     VerticalOptions="Center" />
             </Border>
-            <Grid
+            <Label
                 Grid.Row="5"
+                Grid.Column="1"
+                Margin="5"
+                FontSize="12"
+                LineBreakMode="CharacterWrap"
+                Text="* 8-16 Characters, 1 Upper case, 1 Lower case, 1 Number, and 1 Special Character"
+                TextColor="#2b579a"
+                WidthRequest="250" />
+            <Grid
+                Grid.Row="6"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
                 Margin="0,20,0,10"
@@ -115,7 +126,6 @@
                     FontSize="15"
                     Text="If you already have an account."
                     VerticalTextAlignment="Center" />
-
 
                 <Label
                     Grid.Row="0"
