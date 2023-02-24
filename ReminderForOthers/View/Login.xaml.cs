@@ -8,6 +8,7 @@ public partial class Login : ContentPage
 	{
 		InitializeComponent();
         BindingContext = new LoginViewModel();
+        Shell.SetNavBarIsVisible(this, false);
     }
 
 	private void TapGestureRecognizer_SignUp(object sender, EventArgs e)

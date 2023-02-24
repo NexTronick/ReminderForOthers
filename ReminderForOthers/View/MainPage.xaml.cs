@@ -1,6 +1,7 @@
 ﻿using ReminderForOthers.ViewModel;
 using Plugin.LocalNotification;
 using ReminderForOthers.Model;
+using ReminderForOthers.View;
 
 namespace ReminderForOthers;
 
@@ -11,6 +12,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         BindingContext = new MainViewModel();
+        Shell.SetNavBarIsVisible(this, false);
     }
     protected override void OnBindingContextChanged()
     {
@@ -24,6 +26,7 @@ public partial class MainPage : ContentPage
         Task login = ((MainViewModel)BindingContext).GotoLoginPageCommand.ExecuteAsync(this);
         Console.WriteLine("Finished Appearing On MainPage");
         Task remind = SetNotificationsAsync();
+        Task move = Shell.Current.GoToAsync(nameof(Friend));
 
     }
 

@@ -7,7 +7,7 @@ public partial class SignUp : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = signUpVM;
-
+        Shell.SetNavBarIsVisible(this, false);
     }
 
 	private void TapGestureRecognizer_HasAccount(object sender, EventArgs e)

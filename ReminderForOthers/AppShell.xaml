@@ -8,6 +8,7 @@
 
     <ShellContent
         ContentTemplate="{DataTemplate local:MainPage}"
+        NavigationPage.HasNavigationBar="false"
         Route="MainPage" />
     <!--<ShellContent
         ContentTemplate="{DataTemplate local:SignUp}"

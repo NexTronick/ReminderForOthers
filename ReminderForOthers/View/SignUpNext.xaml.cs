@@ -8,7 +8,8 @@ public partial class SignUpNext : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = signUpVM;
-	}
+        Shell.SetNavBarIsVisible(this, false);
+    }
 
     private void TapGestureRecognizer_HasAccount(object sender, EventArgs e)
     {

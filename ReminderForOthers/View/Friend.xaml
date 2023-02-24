@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ReminderForOthers.View.Friend"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
+    Title="Friend"
+    x:DataType="viewmodel:FriendViewModel">
+    <StackLayout>
+        <!--  Back and notification button  -->
+
+        <Grid
+            Padding="0,10,0,10"
+            BackgroundColor="Transparent"
+            ColumnDefinitions="0.25*,*,0.25*"
+            RowDefinitions="auto">
+            <ImageButton
+                Grid.Row="0"
+                Grid.Column="0"
+                Command="{Binding GoBackCommand}"
+                HeightRequest="30"
+                Source="icons/arrow_coloured.png" />
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                FontAttributes="Bold"
+                FontSize="30"
+                HorizontalTextAlignment="Center"
+                Text="Friends"
+                TextColor="#2b579a" />
+            <ImageButton
+                Grid.Row="0"
+                Grid.Column="2"
+                Command="{Binding GotoNotificationCommand}"
+                HeightRequest="30"
+                Source="icons/notification_coloured.png" />
+        </Grid>
+        <!--<Border />-->
+        <Border
+            Margin="15"
+            BackgroundColor="#3484ff"
+            HeightRequest="160"
+            StrokeShape="RoundRectangle 0,40,40,0"
+            StrokeThickness="2">
+            <ScrollView>
+                <StackLayout>
+                    <Label
+                        Margin="10,5,0,0"
+                        FontSize="17"
+                        Text="Friend Requests:"
+                        TextColor="White" />
+                    <Label
+                        Margin="10,5,0,0"
+                        Text="NONE"
+                        TextColor="White" />
+                    <Label
+                        Margin="10,5,0,0"
+                        Text="NONE"
+                        TextColor="White" />
+                    <Label
+                        Margin="10,5,0,0"
+                        Text="NONE"
+                        TextColor="White" />
+                    <Label
+                        Margin="10,5,0,0"
+                        Text="NONE"
+                        TextColor="White" />
+                    <Label
+                        Margin="10,5,0,0"
+                        Text="NONE"
+                        TextColor="White" />
+                    <Label
+                        Margin="10,5,0,0"
+                        Text="NONE"
+                        TextColor="White" />
+                    <Label
+                        Margin="10,5,0,0"
+                        Text="NONE"
+                        TextColor="White" />
+                    <Label
+                        Margin="10,5,0,0"
+                        Text="NONE"
+                        TextColor="White" />
+                </StackLayout>
+            </ScrollView>
+        </Border>
+        <!--  Top text area  -->
+
+        <Grid
+            Margin="30,20,20,30"
+            ColumnDefinitions="0.70*,0.2*"
+            RowDefinitions="auto,auto,auto">
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                FontAttributes="Bold"
+                FontSize="20"
+                Text="Friends list"
+                TextColor="#222222" />
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                Margin="0,5,0,0"
+                FontAttributes="Bold"
+                Text="Add Friend"
+                TextColor="#3484ff">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddFriendCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Border
+                Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,0,0,15" />
+            <ScrollView
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="10,0,0,0"
+                HeightRequest="430">
+                <StackLayout>
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="Black" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="Black" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="Black" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="#3484ff" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="#3484ff" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="#3484ff" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="#3484ff" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="#3484ff" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="#3484ff" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="#3484ff" />
+                    <Label
+                        Margin="0,5,0,0"
+                        FontAttributes="Bold"
+                        FontSize="50"
+                        Text="Add Friend"
+                        TextColor="#3484ff" />
+
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+        <!--  List area  -->
+
+        <BoxView VerticalOptions="FillAndExpand" Color="Black" />
+        <Grid
+            Padding="0,15,0,15"
+            BackgroundColor="#2b579a"
+            ColumnDefinitions="0.25*,0.25*,0.25*,0.25*"
+            RowDefinitions="auto"
+            VerticalOptions="End">
+            <ImageButton
+                Grid.Column="0"
+                Command="{Binding GotoHomeCommand}"
+                HeightRequest="30"
+                Source="icons/home.png"
+                WidthRequest="105" />
+            <ImageButton
+                Grid.Column="1"
+                Command="{Binding GotoSetReminderCommand}"
+                HeightRequest="30"
+                Source="Resources/Images/icons/reminder.png"
+                WidthRequest="105" />
+            <ImageButton
+                Grid.Column="2"
+                Command="{Binding GotoFriendsCommand}"
+                HeightRequest="30"
+                Source="icons/friends.png"
+                WidthRequest="105" />
+            <ImageButton
+                Grid.Column="3"
+                Command="{Binding GotoSettingsCommand}"
+                HeightRequest="30"
+                Source="icons/settings.png"
+                WidthRequest="105" />
+        </Grid>
+    </StackLayout>
+</ContentPage>

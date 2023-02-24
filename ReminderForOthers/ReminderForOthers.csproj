@@ -47,6 +47,28 @@
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
+  
+	<ItemGroup>
+	  <None Remove="Resources\Images\icons\arrow_coloured.png" />
+	  <None Remove="Resources\Images\icons\arrow_white.png" />
+	  <None Remove="Resources\Images\icons\friends.png" />
+	  <None Remove="Resources\Images\icons\home.png" />
+	  <None Remove="Resources\Images\icons\notification_coloured.png" />
+	  <None Remove="Resources\Images\icons\notification_white.png" />
+	  <None Remove="Resources\Images\icons\reminder.png" />
+	  <None Remove="Resources\Images\icons\settings.png" />
+	</ItemGroup>
+  
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\icons\arrow_coloured.png" />
+	  <MauiImage Include="Resources\Images\icons\arrow_white.png" />
+	  <MauiImage Include="Resources\Images\icons\friends.png" />
+	  <MauiImage Include="Resources\Images\icons\home.png" />
+	  <MauiImage Include="Resources\Images\icons\notification_coloured.png" />
+	  <MauiImage Include="Resources\Images\icons\notification_white.png" />
+	  <MauiImage Include="Resources\Images\icons\reminder.png" />
+	  <MauiImage Include="Resources\Images\icons\settings.png" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
@@ -59,6 +81,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="View\Friend.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="View\Login.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

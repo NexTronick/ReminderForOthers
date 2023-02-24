@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ReminderForOthers.Model;
+using ReminderForOthers.View;
 
 namespace ReminderForOthers.ViewModel;
 
@@ -33,7 +34,8 @@ public partial class LoginViewModel : ObservableObject
         {
             //store to cache for logged In status true, username of the user. in a new method
             //logged in
-            await Shell.Current.GoToAsync(".."); //back to MainPage
+            //await Shell.Current.GoToAsync(".."); //back to MainPage
+            await Shell.Current.GoToAsync("../" + nameof(Friend));
         }
         else
         {
