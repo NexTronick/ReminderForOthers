@@ -2,6 +2,9 @@
 using ReminderForOthers.ViewModel;
 using ReminderForOthers.View;
 using ReminderForOthers.Model;
+using Microsoft.Maui.LifecycleEvents;
+using FirebaseAdmin;
+using Microsoft.Maui.Controls.PlatformConfiguration;
 
 namespace ReminderForOthers;
 
@@ -17,7 +20,7 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
-		
+
 		
 		builder.Services.AddTransient<MainPage>();
 		builder.Services.AddTransient<MainViewModel>();
@@ -34,6 +37,7 @@ public static class MauiProgram
         builder.Services.AddTransient<SignUp>();
         builder.Services.AddTransient<SignUpNext>();
         builder.Services.AddSingleton<SignUpViewModel>();
+		builder.Services.AddSingleton<SignUpSingleton>();
 		builder.Services.AddTransient<SignUpModel>();
 
         return builder.Build();
