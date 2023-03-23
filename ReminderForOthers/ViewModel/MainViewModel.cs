@@ -128,7 +128,7 @@ public partial class MainViewModel : ObservableObject
     private async Task<bool> UserExists()
     {
         SignUpModel signUpModel = new SignUpModel();
-        return await signUpModel.DoesUserNameExitsAsync(userTo);
+        return await signUpModel.DoesUserNameExits(userTo);
     }
 
     private bool ValidateReminder()

@@ -21,8 +21,6 @@ namespace ReminderForOthers.Model
 
         public async Task<int> ValidateUserLogin(string username, string password)
         {
-
-            IDictionary<string, User> usersDict = await signUpModel.GetUsersLocallyAsync();
             int valid = await signUpModel.ValidatePasswordAsync(username, password);
             if (valid == 1) { await StoreLogInCacheAsync(username); }
             return valid;//login failed no user exits

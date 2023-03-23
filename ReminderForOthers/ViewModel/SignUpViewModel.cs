@@ -5,6 +5,7 @@ using System.Net.Mail;
 using ReminderForOthers.View;
 using System.Diagnostics.Tracing;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace ReminderForOthers.ViewModel;
 
@@ -31,6 +32,7 @@ public partial class SignUpViewModel : ObservableObject
     [ObservableProperty]
     string rePassword;
 
+    private SignUpSingleton signUpSingleton;
     public SignUpViewModel()
     {
 
@@ -38,9 +40,8 @@ public partial class SignUpViewModel : ObservableObject
         birthDate = new DatePicker();
         birthDate.MaximumDate = new DateTime(DateTime.Today.Year - 3, DateTime.Today.Month, DateTime.Today.Day); //minimum 3 years old.
         birthDate.MinimumDate = new DateTime(DateTime.Today.Year - 100, DateTime.Today.Month, DateTime.Today.Day); //support until 100 years old}
+        signUpSingleton = new SignUpSingleton();
     }
-
-
 
     //sign up page
     [RelayCommand]
@@ -77,8 +78,11 @@ public partial class SignUpViewModel : ObservableObject
             ShowError("Field Incomplete", "Date is not filled in.");
             return false;
         }
-
-        return true;
+        signUpSingleton.birthDate = bDay.ToString();
+        signUpSingleton.firstName = firstName;
+        signUpSingleton.lastName = lastName;
+        Console.WriteLine("signUpSingleton.lastName : "+ signUpSingleton.lastName);
+        return true; 
     }
 
     //to show the error for the phone 
@@ -135,7 +139,20 @@ public partial class SignUpViewModel : ObservableObject
         {
             await Shell.Current.DisplayAlert("User Registered!", "User has been registered, Login Now.", "Okay");
         }
+        ClearSignUpData();
         await HasAccountFromSignUpNext();
+    }
+
+    //helper method to empty the data
+    private void ClearSignUpData() {
+        firstName = "";
+        lastName = "";
+        birthDate.Date = birthDate.MaximumDate;
+        username = "";
+        email = "";
+        password = "";
+        rePassword = "";
+        signUpSingleton.ClearAllData();
     }
 
     [RelayCommand]
@@ -147,10 +164,11 @@ public partial class SignUpViewModel : ObservableObject
 
     private async Task<int> SetUser()
     {
-        SignUpModel signUpModel = new SignUpModel(lastName, firstName, birthDate.Date.ToString(), username, new MailAddress(email), password);
+        SignUpModel signUpModel = new SignUpModel(signUpSingleton.lastName, signUpSingleton.firstName, signUpSingleton.birthDate, username, new MailAddress(email), password);
         int stored = await signUpModel.StoreUserAsync();
         //test json deserilize
         //Task<IDictionary<string,User>> userData= signUpModel.GetLocalUsers();
+        ClearSignUpData();
         return stored;
     }
 
