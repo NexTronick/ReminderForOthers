@@ -28,7 +28,7 @@ namespace ReminderForOthers.ViewModel
         {
             reminders = await mainViewModel.GetRemindersAsync();
             ObserveReminders = new ObservableCollection<Reminder>(reminders);
-            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveReminders)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveReminders)));
         }
 
         [RelayCommand]
