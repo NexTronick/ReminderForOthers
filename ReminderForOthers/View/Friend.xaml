@@ -3,8 +3,8 @@
     x:Class="ReminderForOthers.View.Friend"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:ReminderForOthers.Model"
     xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
-    Title="Friend"
     x:DataType="viewmodel:FriendViewModel">
     <StackLayout>
         <!--  Back and notification button  -->
@@ -36,58 +36,93 @@
                 Source="icons/notification_coloured.png" />
         </Grid>
         <!--<Border />-->
+
+
+        <!--  Friend requests area  -->
+        <Label
+            Margin="20,20,0,0"
+            FontAttributes="Bold"
+            FontSize="20"
+            Text="Friend Requests:"
+            TextColor="#222222" />
+        <Label
+            Margin="20,5,0,0"
+            FontSize="12"
+            Text="(Swipe from left to right to accept/decline friend request.)"
+            TextColor="#222222" />
+        <!--  Swipe from left to right for more accept/decline friend request  -->
         <Border
             Margin="15"
             BackgroundColor="#3484ff"
-            HeightRequest="160"
+            HeightRequest="170"
             StrokeShape="RoundRectangle 0,40,40,0"
             StrokeThickness="2">
-            <ScrollView>
-                <StackLayout>
-                    <Label
-                        Margin="10,5,0,0"
-                        FontSize="17"
-                        Text="Friend Requests:"
-                        TextColor="White" />
-                    <Label
-                        Margin="10,5,0,0"
-                        Text="NONE"
-                        TextColor="White" />
-                    <Label
-                        Margin="10,5,0,0"
-                        Text="NONE"
-                        TextColor="White" />
-                    <Label
-                        Margin="10,5,0,0"
-                        Text="NONE"
-                        TextColor="White" />
-                    <Label
-                        Margin="10,5,0,0"
-                        Text="NONE"
-                        TextColor="White" />
-                    <Label
-                        Margin="10,5,0,0"
-                        Text="NONE"
-                        TextColor="White" />
-                    <Label
-                        Margin="10,5,0,0"
-                        Text="NONE"
-                        TextColor="White" />
-                    <Label
-                        Margin="10,5,0,0"
-                        Text="NONE"
-                        TextColor="White" />
-                    <Label
-                        Margin="10,5,0,0"
-                        Text="NONE"
-                        TextColor="White" />
-                </StackLayout>
-            </ScrollView>
-        </Border>
-        <!--  Top text area  -->
 
+            <CollectionView ItemsSource="{Binding ObserveFriendRequests}">
+                <CollectionView.EmptyView>
+                    <StackLayout>
+                        <Label
+                            Margin="20"
+                            FontSize="16"
+                            Text="No Friend Requests"
+                            TextColor="White" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FriendRequest">
+                        <Border
+                            Margin="5"
+                            BackgroundColor="Transparent"
+                            StrokeShape="RoundRectangle 0,40,40,0">
+                            <SwipeView>
+                                <SwipeView.LeftItems>
+                                    <SwipeItems>
+                                        <SwipeItem
+                                            BackgroundColor="#0c7200"
+                                            Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:FriendViewModel}}, Path=AcceptRequestCommand}"
+                                            CommandParameter="{Binding .}"
+                                            IconImageSource="icons/request_accept.svg"
+                                            Text="Accept" />
+                                        <SwipeItem
+                                            BackgroundColor="#a40000"
+                                            Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:FriendViewModel}}, Path=DeleteRequestCommand}"
+                                            CommandParameter="{Binding .}"
+                                            IconImageSource="icons/request_decline.svg"
+                                            Text="Delete" />
+                                    </SwipeItems>
+                                </SwipeView.LeftItems>
+                                <StackLayout Margin="10">
+
+                                    <Grid
+                                        Padding="5,0,0,0"
+                                        ColumnDefinitions="0.75*,0.25*"
+                                        RowDefinitions="auto,auto">
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            FontSize="16"
+                                            Text="{Binding FriendUsername}"
+                                            TextColor="White" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            FontSize="16"
+                                            Text="{Binding RequestDate.Date}"
+                                            TextColor="White" />
+                                    </Grid>
+
+
+                                </StackLayout>
+                            </SwipeView>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+
+        <!--  Friend List text and add freind btn  -->
         <Grid
-            Margin="30,20,20,30"
+            Margin="15,20,15,0"
             ColumnDefinitions="0.70*,0.2*"
             RowDefinitions="auto,auto,auto">
             <Label
@@ -108,90 +143,60 @@
                     <TapGestureRecognizer Command="{Binding AddFriendCommand}" />
                 </Label.GestureRecognizers>
             </Label>
-            <Border
-                Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                Margin="0,0,0,15" />
-            <ScrollView
-                Grid.Row="2"
-                Grid.Column="0"
-                Grid.ColumnSpan="2"
-                Margin="10,0,0,0"
-                HeightRequest="430">
-                <StackLayout>
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="Black" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="Black" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="Black" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="#3484ff" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="#3484ff" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="#3484ff" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="#3484ff" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="#3484ff" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="#3484ff" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="#3484ff" />
-                    <Label
-                        Margin="0,5,0,0"
-                        FontAttributes="Bold"
-                        FontSize="50"
-                        Text="Add Friend"
-                        TextColor="#3484ff" />
 
-                </StackLayout>
-            </ScrollView>
+
         </Grid>
-        <!--  List area  -->
+        <!--  List  -->
+        <Border Margin="15,10,15,10" BackgroundColor="Transparent">
+            <CollectionView
+                HeightRequest="360"
+                ItemsSource="{Binding ObserveFriendList}"
+                VerticalScrollBarVisibility="Always">
+                <CollectionView.EmptyView>
+                    <StackLayout>
+                        <Label Margin="20" Text="No Friends" />
+                    </StackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:FriendRequest">
+                        <Border Margin="10" BackgroundColor="Transparent">
+                            <SwipeView>
+                                <SwipeView.LeftItems>
+                                    <SwipeItems>
+                                        <SwipeItem
+                                            BackgroundColor="#a40000"
+                                            Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:FriendViewModel}}, Path=RemoveFriendCommand}"
+                                            CommandParameter="{Binding .}"
+                                            IconImageSource="icons/unfriend.png"
+                                            Text="Remove" />
+                                    </SwipeItems>
+                                </SwipeView.LeftItems>
+                                <StackLayout>
+                                    <Grid
+                                        Padding="10"
+                                        BackgroundColor="#3484ff"
+                                        ColumnDefinitions="0.75*,0.25*"
+                                        RowDefinitions="auto,auto">
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="{Binding FriendUsername}"
+                                            TextColor="White" />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="0"
+                                            Text="{Binding RequestDate.Date}"
+                                            TextColor="White" />
+                                    </Grid>
+                                </StackLayout>
+                            </SwipeView>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
 
+        <!--  Navigation btns  -->
         <BoxView VerticalOptions="FillAndExpand" Color="Black" />
         <Grid
             Padding="0,15,0,15"

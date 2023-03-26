@@ -56,7 +56,15 @@
 	  <None Remove="Resources\Images\icons\notification_coloured.png" />
 	  <None Remove="Resources\Images\icons\notification_white.png" />
 	  <None Remove="Resources\Images\icons\reminder.png" />
+	  <None Remove="Resources\Images\icons\request_accept.svg" />
+	  <None Remove="Resources\Images\icons\request_decline.svg" />
 	  <None Remove="Resources\Images\icons\settings.png" />
+	  <None Remove="Resources\Images\icons\unfriend.png" />
+	</ItemGroup>
+  
+	<ItemGroup>
+	  <MauiImage Include="Resources\Images\icons\request_accept.svg" />
+	  <MauiImage Include="Resources\Images\icons\request_decline.svg" />
 	</ItemGroup>
   
 	<ItemGroup>
@@ -68,6 +76,7 @@
 	  <MauiImage Include="Resources\Images\icons\notification_white.png" />
 	  <MauiImage Include="Resources\Images\icons\reminder.png" />
 	  <MauiImage Include="Resources\Images\icons\settings.png" />
+	  <MauiImage Include="Resources\Images\icons\unfriend.png" />
 	</ItemGroup>
 
 	<ItemGroup>
