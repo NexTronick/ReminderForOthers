@@ -25,36 +25,36 @@ public partial class MainPage : ContentPage
         Console.WriteLine("OnAppearing");
         Task login = ((MainViewModel)BindingContext).GotoLoginPageCommand.ExecuteAsync(this);
         Console.WriteLine("Finished Appearing On MainPage");
-        Task remind = SetNotificationsAsync();
-        Task move = Shell.Current.GoToAsync(nameof(Friend));
+        //Task remind = SetNotificationsAsync();
+        //Task move = Shell.Current.GoToAsync(nameof(Friend));
 
     }
 
     protected async Task SetNotificationsAsync()
     {
         List<Reminder> reminders = await ((MainViewModel)BindingContext).GetRemindersAsync();
-        if (reminders == null) { return;  }
+        if (reminders == null) { return; }
 
         foreach (var reminder in reminders)
         {
             var request = new NotificationRequest
             {
-                NotificationId = 100+reminder.Id,
+                NotificationId = 100 + reminder.Id,
                 Title = reminder.Title,
                 Subtitle = "Reminder",
                 Description = $"Remember to {reminder.Title}, from {reminder.UsernameFrom}",
                 BadgeNumber = 42,
                 Schedule = new NotificationRequestSchedule
                 {
-                    NotifyTime = reminder.Date.AddTicks(reminder.Time.Ticks),
+                    NotifyTime = reminder.PlayDateTime,
                     NotifyRepeatInterval = TimeSpan.FromDays(1)
                 }
             };
-            Console.WriteLine($"Time: {reminder.Date.AddTicks(reminder.Time.Ticks)}");
+            Console.WriteLine($"Time: {reminder.PlayDateTime}");
             await LocalNotificationCenter.Current.Show(request);
-            
+
         }
     }
- 
+
 }
 

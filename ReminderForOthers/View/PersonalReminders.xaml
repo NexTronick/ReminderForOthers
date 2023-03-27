@@ -73,13 +73,13 @@
                                         <Label
                                             Grid.Row="0"
                                             Grid.Column="0"
-                                            Text="Date: " />
+                                            Text="Reminder Date and Time: " />
                                         <Label
                                             Grid.Row="0"
                                             Grid.Column="1"
-                                            Text="{Binding Date}" />
+                                            Text="{Binding PlayDateTime}" />
                                     </Grid>
-                                    <Grid
+                                    <!--<Grid
                                         Grid.Row="3"
                                         ColumnDefinitions="auto,auto"
                                         ColumnSpacing="100">
@@ -91,9 +91,9 @@
                                             Grid.Row="0"
                                             Grid.Column="1"
                                             Text="{Binding Time}" />
-                                    </Grid>
+                                    </Grid>-->
                                     <Grid
-                                        Grid.Row="4"
+                                        Grid.Row="3"
                                         ColumnDefinitions="auto,auto"
                                         ColumnSpacing="40">
                                         <Label

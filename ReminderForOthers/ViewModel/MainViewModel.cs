@@ -50,7 +50,8 @@ public partial class MainViewModel : ObservableObject
         //record audio
         //record the voice
         bool record = await recordModel.RecordAudioAsync();
-        if (!record) {
+        if (!record)
+        {
             await Shell.Current.DisplayAlert("Media Record Failed!", "The media may Have already started the recording. Try hitting the Reset button, before clicking on Record.", "Okay");
         }
     }
@@ -191,7 +192,7 @@ public partial class MainViewModel : ObservableObject
         await GotoLoginPageAsync();
     }
     [RelayCommand]
-    public async Task CheckMyReminders() 
+    public async Task CheckMyReminders()
     {
         await Shell.Current.GoToAsync(nameof(PersonalReminders));
     }
@@ -199,7 +200,7 @@ public partial class MainViewModel : ObservableObject
     public async Task<List<Reminder>> GetRemindersAsync()
     {
         ReminderModel reminderModel = new ReminderModel();
-        IDictionary<int, Reminder> currentUserReminders = await reminderModel.GetRemindersForUserAsync(await GetUserLoggedInAsync());
+        IDictionary<string, Reminder> currentUserReminders = await reminderModel.GetRemindersForUserAsync(await GetUserLoggedInAsync());
         if (currentUserReminders == null) { return new List<Reminder>(); }
 
         Reminder[] arrangedReminders = RearrangeDictionary(currentUserReminders);
@@ -207,23 +208,23 @@ public partial class MainViewModel : ObservableObject
         return arrangedReminders.ToList();
     }
     //helper method to re arrange according to date and time
-    private Reminder[] RearrangeDictionary(IDictionary<int, Reminder> reminders)
+    private Reminder[] RearrangeDictionary(IDictionary<string, Reminder> reminders)
     {
         Reminder[] reminderArr = ConvertToReminderArr(reminders);
 
         for (int i = 0; i < reminderArr.Length; i++)
         {
-            for (int j = reminderArr.Length-1; j > i ; j--)
+            for (int j = reminderArr.Length - 1; j > i; j--)
             {
                 Console.WriteLine($"Before switch, Reminder i:{reminderArr[i].Id}, Reminder j: {reminderArr[j].Id}");
-                if (reminderArr[i].Date >= reminderArr[j].Date) 
+                if (reminderArr[i].PlayDateTime >= reminderArr[j].PlayDateTime)
                 {
-                    if (reminderArr[i].Time > reminderArr[j].Time) {
-                        Reminder temp = reminderArr[i];
-                        reminderArr[i] = reminderArr[j];
-                        reminderArr[j] = temp;
-                        Console.WriteLine($"After switch, Reminder i:{reminderArr[i].Id}, Reminder j: {reminderArr[j].Id}");
-                    }
+
+                    Reminder temp = reminderArr[i];
+                    reminderArr[i] = reminderArr[j];
+                    reminderArr[j] = temp;
+                    Console.WriteLine($"After switch, Reminder i:{reminderArr[i].Id}, Reminder j: {reminderArr[j].Id}");
+
                 }
             }
         }
@@ -232,7 +233,7 @@ public partial class MainViewModel : ObservableObject
         return reminderArr;
     }
 
-    private Reminder[] ConvertToReminderArr(IDictionary<int, Reminder> reminders)
+    private Reminder[] ConvertToReminderArr(IDictionary<string, Reminder> reminders)
     {
         Reminder[] reminderArr = new Reminder[reminders.Count];
         int i = 0;
