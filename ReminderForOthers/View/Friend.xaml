@@ -14,12 +14,7 @@
             BackgroundColor="Transparent"
             ColumnDefinitions="0.25*,*,0.25*"
             RowDefinitions="auto">
-            <ImageButton
-                Grid.Row="0"
-                Grid.Column="0"
-                Command="{Binding GoBackCommand}"
-                HeightRequest="30"
-                Source="icons/arrow_coloured.png" />
+
             <Label
                 Grid.Row="0"
                 Grid.Column="1"
@@ -197,7 +192,7 @@
         </Border>
 
         <!--  Navigation btns  -->
-        <BoxView VerticalOptions="FillAndExpand" Color="Black" />
+        <!--<BoxView VerticalOptions="FillAndExpand" Color="Black" />
         <Grid
             Padding="0,15,0,15"
             BackgroundColor="#2b579a"
@@ -228,6 +223,6 @@
                 HeightRequest="30"
                 Source="icons/settings.png"
                 WidthRequest="105" />
-        </Grid>
+        </Grid>-->
     </StackLayout>
 </ContentPage>

@@ -6,28 +6,40 @@
     xmlns:models="clr-namespace:ReminderForOthers.Model"
     xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
     x:DataType="viewmodel:PersonalReminderViewModel">
-    <ScrollView>
-        <StackLayout>
-            <Label
-                Margin="5,10,15,0"
-                FontAttributes="Italic"
-                FontSize="18"
-                HorizontalOptions="End"
-                Text="Logout"
-                TextDecorations="Underline">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding LogoutUserCommand}" />
-                </Label.GestureRecognizers>
-            </Label>
-            <Label
-                Margin="10"
-                FontAttributes="Bold"
-                FontSize="20"
-                HorizontalOptions="Center"
-                Text="My Personal Reminders"
-                VerticalOptions="Center" />
 
-            <CollectionView ItemsSource="{Binding ObserveReminders}">
+    <StackLayout>
+        <Grid
+            Padding="0,10,0,10"
+            BackgroundColor="Transparent"
+            ColumnDefinitions="0.25*,*,0.25*"
+            RowDefinitions="auto">
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                FontAttributes="Bold"
+                FontSize="30"
+                HorizontalTextAlignment="Center"
+                Text="Home"
+                TextColor="#2b579a" />
+            <ImageButton
+                Grid.Row="0"
+                Grid.Column="2"
+                Command="{Binding GotoNotificationCommand}"
+                HeightRequest="30"
+                Source="icons/notification_coloured.png" />
+        </Grid>
+
+        <Label
+            Margin="0"
+            FontAttributes="Bold"
+            FontSize="20"
+            HorizontalOptions="Center"
+            Text="My Personal Reminders"
+            VerticalOptions="Center" />
+
+        <Border Margin="20,10,20,10">
+            <CollectionView HeightRequest="300" ItemsSource="{Binding ObserveReminders}">
                 <CollectionView.EmptyView>
                     <Label Margin="20" Text="There are no reminders here." />
                 </CollectionView.EmptyView>
@@ -118,26 +130,139 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+        </Border>
+        <Label
+            Margin="0"
+            FontAttributes="Bold"
+            FontSize="20"
+            HorizontalOptions="Center"
+            Text="Reminders Sent"
+            VerticalOptions="Center" />
+        <Border Margin="20,10,20,10">
+            <CollectionView HeightRequest="250" ItemsSource="{Binding ObserveReminders}">
+                <CollectionView.EmptyView>
+                    <Label Margin="20" Text="There are no reminders here." />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Reminder">
+                        <Border>
+                            <StackLayout>
+                                <Grid
+                                    Padding="20,10,20,0"
+                                    ColumnDefinitions="auto"
+                                    RowDefinitions="auto,auto,auto,auto,auto">
+                                    <Grid
+                                        Grid.Row="0"
+                                        ColumnDefinitions="auto,auto"
+                                        ColumnSpacing="120">
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="Id: " />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding Id}" />
+                                    </Grid>
 
-
-            <!--<ViewCell>
-                <ScrollView>
-                    <StackLayout>
-
-                    </StackLayout>
-                </ScrollView>
-            </ViewCell>-->
-            <!--<ListView ItemsSource="{Binding ListView.ItemsSource}">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid>
-                                <Label Text="{Binding Title}" />
-                            </Grid>
-                        </ViewCell>
+                                    <Grid
+                                        Grid.Row="1"
+                                        ColumnDefinitions="auto,auto"
+                                        ColumnSpacing="105">
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="Title: " />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding Title}" />
+                                    </Grid>
+                                    <Grid
+                                        Grid.Row="2"
+                                        ColumnDefinitions="auto,auto"
+                                        ColumnSpacing="100">
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="Reminder Date and Time: " />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding PlayDateTime}" />
+                                    </Grid>
+                                    <!--<Grid
+                                        Grid.Row="3"
+                                        ColumnDefinitions="auto,auto"
+                                        ColumnSpacing="100">
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="Time: " />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding Time}" />
+                                    </Grid>-->
+                                    <Grid
+                                        Grid.Row="3"
+                                        ColumnDefinitions="auto,auto"
+                                        ColumnSpacing="40">
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="Received from: " />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding UsernameFrom}" />
+                                    </Grid>
+                                </Grid>
+                                <Label Margin="20,0,0,0" Text="File path: " />
+                                <Label
+                                    Margin="20,0,0,0"
+                                    HeightRequest="80"
+                                    LineBreakMode="CharacterWrap"
+                                    MaxLines="15"
+                                    Text="{Binding RecordPath}" />
+                            </StackLayout>
+                        </Border>
                     </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>-->
-        </StackLayout>
-    </ScrollView>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Border>
+        <!--  Navigation btns  -->
+        <!--<BoxView VerticalOptions="FillAndExpand" Color="Transparent" />
+        <Grid
+            Padding="0,15,0,15"
+            BackgroundColor="#2b579a"
+            ColumnDefinitions="0.25*,0.25*,0.25*,0.25*"
+            RowDefinitions="auto"
+            VerticalOptions="End">
+            <ImageButton
+                Grid.Column="0"
+                Command="{Binding GotoHomeCommand}"
+                HeightRequest="30"
+                Source="icons/home.png"
+                WidthRequest="105" />
+            <ImageButton
+                Grid.Column="1"
+                Command="{Binding GotoSetReminderCommand}"
+                HeightRequest="30"
+                Source="Resources/Images/icons/reminder.png"
+                WidthRequest="105" />
+            <ImageButton
+                Grid.Column="2"
+                Command="{Binding GotoFriendsCommand}"
+                HeightRequest="30"
+                Source="icons/friends.png"
+                WidthRequest="105" />
+            <ImageButton
+                Grid.Column="3"
+                Command="{Binding GotoSettingsCommand}"
+                HeightRequest="30"
+                Source="icons/settings.png"
+                WidthRequest="105" />
+        </Grid>-->
+    </StackLayout>
 </ContentPage>

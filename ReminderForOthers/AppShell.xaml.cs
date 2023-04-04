@@ -13,5 +13,6 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(Login), typeof(Login));
         Routing.RegisterRoute(nameof(Friend), typeof(Friend));
         Routing.RegisterRoute(nameof(PersonalReminders), typeof(PersonalReminders));
+        Routing.RegisterRoute(nameof(Settings),typeof(Settings));
     }
 }

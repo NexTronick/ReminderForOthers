@@ -7,6 +7,6 @@ public partial class PersonalReminders : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = new PersonalReminderViewModel();
-        Shell.SetNavBarIsVisible(this, false);
+        //Shell.SetNavBarIsVisible(this, false);
     }
 }

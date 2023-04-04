@@ -8,7 +8,7 @@ public partial class Friend : ContentPage
 	{
 		InitializeComponent();
         BindingContext = new FriendViewModel();
-        Shell.SetNavBarIsVisible(this, false);
+        //Shell.SetNavBarIsVisible(this, false);
     }
     protected override void OnAppearing()
     {

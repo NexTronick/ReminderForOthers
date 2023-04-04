@@ -12,7 +12,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         BindingContext = new MainViewModel();
-        Shell.SetNavBarIsVisible(this, false);
+        //Shell.SetNavBarIsVisible(this, false);
     }
     protected override void OnBindingContextChanged()
     {

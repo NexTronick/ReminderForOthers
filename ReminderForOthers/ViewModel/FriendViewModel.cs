@@ -249,7 +249,7 @@ namespace ReminderForOthers.ViewModel
         [RelayCommand]
         async void GotoSettings()
         {
-            //await Shell.Current.GoToAsync("./" + nameof(MainPage)); //home set to be Personal Reminders
+            await Shell.Current.GoToAsync(nameof(Settings));
         }
 
         [RelayCommand]
@@ -262,6 +262,10 @@ namespace ReminderForOthers.ViewModel
         async void GoBack() => await Shell.Current.GoToAsync("..");
 
         [RelayCommand]
-        async void GotoNotification() => await Shell.Current.GoToAsync("..");
+        async void GotoNotification()
+        {
+            //await Shell.Current.GoToAsync("..");
+            await Shell.Current.DisplayAlert("Notification", "Notification is to be added.", "Okay");
+        }
     }
 }

@@ -242,4 +242,16 @@ public partial class SignUpViewModel : ObservableObject
     }
 
 
+
+    //default navigations
+
+
+    [RelayCommand]
+    async void GoBack() => await Shell.Current.GoToAsync("..");
+
+    [RelayCommand]
+    async void GotoNotification()
+    {
+        await Shell.Current.DisplayAlert("Login Required", "Login is required for accessing Notifications.", "Okay");
+    }
 }

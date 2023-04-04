@@ -22,13 +22,14 @@ public partial class LoginViewModel : ObservableObject
         //validate here
 
         //if filed is filled in
-        if (!CheckValidStr()) {
+        if (!CheckValidStr())
+        {
             await App.Current.MainPage.DisplayAlert("Verification Error", "Username or Password is not filled in. Try again.", "Okay");
             return;
         }
 
         LoginModel loginModel = new LoginModel();
-        int loginValid = await loginModel.ValidateUserLogin(username,password);
+        int loginValid = await loginModel.ValidateUserLogin(username, password);
         Console.WriteLine($"Login Valid: {loginValid}");
         if (loginValid == 1)
         {
@@ -41,19 +42,25 @@ public partial class LoginViewModel : ObservableObject
         {
             await App.Current.MainPage.DisplayAlert("Validation Error", "Username or Password is wrong. Try again.", "Okay");
         }
-        
+
     }
 
     [RelayCommand]
-    void CheckBoxTick() 
+    void CheckBoxTick()
     {
         CheckBox = !CheckBox;
     }
-    private bool CheckValidStr() 
+    private bool CheckValidStr()
     {
         return !string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password);
     }
 
     [RelayCommand]
-    Task SignUpNow() => Shell.Current.GoToAsync(nameof(SignUp));
+    async void SignUpNow() => await Shell.Current.GoToAsync(nameof(SignUp));
+
+    [RelayCommand]
+    async void GotoNotification()
+    {
+        await Shell.Current.DisplayAlert("Login Required", "Login is required for accessing Notifications.", "Okay");
+    }
 }

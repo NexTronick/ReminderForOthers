@@ -8,6 +8,32 @@
     x:DataType="viewmodel:SignUpViewModel">
     <StackLayout>
         <Grid
+            Padding="0,10,0,10"
+            BackgroundColor="Transparent"
+            ColumnDefinitions="0.25*,*,0.25*"
+            RowDefinitions="auto">
+            <ImageButton
+                Grid.Row="0"
+                Grid.Column="0"
+                Command="{Binding GoBackCommand}"
+                HeightRequest="30"
+                Source="icons/arrow_coloured.png" />
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                FontAttributes="Bold"
+                FontSize="30"
+                HorizontalTextAlignment="Center"
+                Text="Sign Up"
+                TextColor="#2b579a" />
+            <ImageButton
+                Grid.Row="0"
+                Grid.Column="2"
+                Command="{Binding GotoNotificationCommand}"
+                HeightRequest="30"
+                Source="icons/notification_coloured.png" />
+        </Grid>
+        <Grid
             Padding="10"
             ColumnDefinitions="0.25*,0.6*"
             RowDefinitions="auto,auto,auto,auto,auto,auto,auto,auto">
@@ -15,6 +41,7 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
+                Margin="0,15,0,15"
                 Padding="50,0,50,0"
                 ColumnDefinitions="0.3*,0.7*"
                 HorizontalOptions="Center"
@@ -23,7 +50,7 @@
                     Grid.Row="0"
                     Grid.Column="0"
                     HorizontalOptions="Center"
-                    WidthRequest="100">
+                    WidthRequest="120">
                     <Image.Source>
                         <FileImageSource>app_logo.png</FileImageSource>
                     </Image.Source>

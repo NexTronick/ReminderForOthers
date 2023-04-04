@@ -243,4 +243,38 @@ public partial class MainViewModel : ObservableObject
         }
         return reminderArr;
     }
+
+
+    //default navigations
+
+    [RelayCommand]
+    async void GotoHome()
+    {
+        await Shell.Current.GoToAsync(nameof(PersonalReminders)); //home set to be Personal Reminders
+    }
+
+    [RelayCommand]
+    void GotoSetReminder()
+    {
+        Shell.SetNavBarIsVisible(Shell.Current.CurrentPage, false); //home set to be Personal Reminders
+    }
+
+    [RelayCommand]
+    async void GotoSettings()
+    {
+        await Shell.Current.GoToAsync(nameof(Settings));
+    }
+
+    [RelayCommand]
+    async void GotoFriends()
+    {
+        await Shell.Current.GoToAsync(nameof(Friend)); //home set to be Personal Reminders
+    }
+
+    [RelayCommand]
+    async void GotoNotification()
+    {
+        //await Shell.Current.GoToAsync("..");
+        await Shell.Current.DisplayAlert("Notification", "Notification is to be added.", "Okay");
+    }
 }
