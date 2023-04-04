@@ -4,7 +4,7 @@
 
     <Color x:Key="Primary">#2b579a</Color>
     <!--  colour #3484ff  -->
-    <Color x:Key="Secondary">#DFD8F7</Color>
+    <Color x:Key="Secondary">#0099ff</Color>
     <Color x:Key="Tertiary">#2a4e83</Color>
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
