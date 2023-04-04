@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="ReminderForOthers.View.Settings"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:ReminderForOthers.Model"
+    xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
+    x:DataType="viewmodel:PersonalReminderViewModel">
+    <StackLayout>
+        <Grid
+            Margin="0,30,0,10"
+            BackgroundColor="Transparent"
+            ColumnDefinitions="0.25*,*,0.25*"
+            RowDefinitions="auto">
+
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                FontAttributes="Bold"
+                FontSize="25"
+                HorizontalTextAlignment="Center"
+                Text="Settings"
+                TextColor="#2b579a" />
+
+        </Grid>
+        <Border Margin="30,40,30,0" BackgroundColor="#efefef">
+            <HorizontalStackLayout>
+                <Image
+                    Margin="15,0,0,0"
+                    HeightRequest="20"
+                    Source="icons/search.svg"
+                    WidthRequest="20">
+                    
+                </Image>
+                <Entry Placeholder="Search for a setting..." PlaceholderColor="#999999" />
+            </HorizontalStackLayout>
+        </Border>
+
+
+        <Label
+            Margin="5,10,15,0"
+            FontAttributes="Italic"
+            FontSize="18"
+            HorizontalOptions="End"
+            Text="Logout"
+            TextDecorations="Underline">
+            <Label.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding LogoutUserCommand}" />
+            </Label.GestureRecognizers>
+        </Label>
+    </StackLayout>
+</ContentPage>
