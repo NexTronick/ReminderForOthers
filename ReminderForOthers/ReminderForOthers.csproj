@@ -33,6 +33,7 @@
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#2b579a" />
+		<MauiImage Include="Resources\Images\icons\search.svg" />
 
 		<!-- Splash Screen -->
 		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#2a4e83" BaseSize="128,128" />
@@ -58,6 +59,7 @@
 	  <None Remove="Resources\Images\icons\reminder.png" />
 	  <None Remove="Resources\Images\icons\request_accept.svg" />
 	  <None Remove="Resources\Images\icons\request_decline.svg" />
+	  <None Remove="Resources\Images\icons\search.svg" />
 	  <None Remove="Resources\Images\icons\settings.png" />
 	  <None Remove="Resources\Images\icons\unfriend.png" />
 	</ItemGroup>
@@ -65,6 +67,7 @@
 	<ItemGroup>
 	  <MauiImage Include="Resources\Images\icons\request_accept.svg" />
 	  <MauiImage Include="Resources\Images\icons\request_decline.svg" />
+    <MauiImage Include="Resources\Images\icons\search.svg" TintColor="#999999" />
 	</ItemGroup>
   
 	<ItemGroup>
@@ -102,6 +105,9 @@
 	  <MauiXaml Update="View\PersonalReminders.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="View\Settings.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="View\SignUp.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -122,5 +128,13 @@
 	  </PackageReference>
 	</ItemGroup>
 
+  <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>..\key.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>nex1619633695147</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>ReminderForOthers</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>nex1619633695147</AndroidSigningKeyPass>
+  </PropertyGroup>
+  
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionReminderForOthersHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 </Project>
