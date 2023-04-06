@@ -8,12 +8,16 @@
     Shell.TabBarBackgroundColor="#2b579a"
     Shell.TabBarUnselectedColor="White">
 
-    <TabBar>
+    <TabBar Route="Login">
+        <ShellContent ContentTemplate="{DataTemplate local:Login}" NavigationPage.HasNavigationBar="True" />
+    </TabBar>
+
+    <TabBar Route="Home">
         <ShellContent
             ContentTemplate="{DataTemplate view:PersonalReminders}"
             Icon="images/home.png"
             NavigationPage.HasNavigationBar="True"
-            Route="Friend" />
+            Route="PersonalReminders" />
         <ShellContent
             ContentTemplate="{DataTemplate local:MainPage}"
             Icon="images/reminder.png"
@@ -29,8 +33,8 @@
             Icon="images/settings.png"
             NavigationPage.HasNavigationBar="True"
             Route="Settings" />
-
     </TabBar>
+
 
     <!--<ShellContent
         ContentTemplate="{DataTemplate local:SignUp}"
