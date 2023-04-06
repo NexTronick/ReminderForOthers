@@ -64,42 +64,85 @@ namespace ReminderForOthers.Model
         private async Task<bool> AddReminderCloudAsync()
         {
             //get reminders first
-            IDictionary<string, Reminder> reminders = await GetRemindersForUserAsync(reminder.UsernameTo);
-            reminder.Id = reminders.Count+1;
+            List<Reminder> reminders = await GetReceivedRemindersAsync(reminder.UsernameTo);
+            reminder.Id = reminders.Count + 1;
 
-            //upload file to firebase storage cloud
+            //upload audio file to firebase storage cloud
             await UploadAudioToCloud();
-            //add now
-            var response = await client.Child(nameof(Reminder)).PostAsync(reminder);
-            await SetReminderFirestore();
 
-            if (response.Key == null) { return false; }
+            //add reminder to cloud
+            //var response = await client.Child(nameof(Reminder)).PostAsync(reminder);
+            bool response = await SetReminderFirestore();
 
-            Console.WriteLine("Reminder key: "+ response.Key);
+            if (!response) { return false; }
+
+            //Console.WriteLine("Reminder key: " + response.Key);
             return true;
         }
 
         //get reminder for userTo
-        public async Task<IDictionary<string, Reminder>> GetRemindersForUserAsync(string userTo)
+        public async Task<List<Reminder>> GetReceivedRemindersAsync(string userTo)
         {
-            var remindersDB = await client.Child(nameof(Reminder)).OnceAsync<Reminder>();
-            IDictionary<string, Reminder> reminders = new Dictionary<string, Reminder>();
-            foreach (var item in remindersDB)
+            var queryUserTo = await CrossCloudFirestore.Current
+                                                 .Instance
+                                                 .Collection("reminder")
+                                                 .WhereEqualsTo("UsernameTo", userTo)
+                                                 .GetAsync();
+
+            var remindersReceived = queryUserTo.ToObjects<Reminder>();
+            foreach (var item in remindersReceived)
             {
-                Reminder temp = item.Object;
-                if (temp.UsernameTo == userTo)
-                {
-                    reminders.Add(item.Key, temp);
-                }
+                Console.WriteLine($"GetReceivedRemindersAsync UsernameFrom: {item.UsernameFrom} to UsernameTo: {item.UsernameTo}");
             }
-            return reminders;
+            return remindersReceived.ToList<Reminder>();
         }
+        //get reminder that user sent
+        public async Task<List<Reminder>> GetSentRemindersAsync(string userFrom)
+        {
+            var queryUserFrom = await CrossCloudFirestore.Current
+                                                 .Instance
+                                                 .Collection("reminder")
+                                                 .WhereEqualsTo("UsernameFrom", userFrom)
+                                                 .GetAsync();
+
+            var remindersSent = queryUserFrom.ToObjects<Reminder>();
+            foreach (var item in remindersSent)
+            {
+                Console.WriteLine($"GetSentRemindersAsync UsernameFrom: {item.UsernameFrom} to UsernameTo: {item.UsernameTo}");
+            }
+            Console.WriteLine($"GetSentRemindersAsync remindersSent: {remindersSent.Count()}");
+            return remindersSent.ToList<Reminder>();
+
+        }
+
+        //get audio from cloud
+        public async Task<string> GetAudioFilePathAsync(string path) 
+        {
+            string fileName = path.Split("/")[1];
+            string filePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
+
+            var reference = CrossFirebaseStorage.Current.Instance.RootReference.Child(path);
+            //var downloadProgress = new Progress<IDownloadState>();
+            //downloadProgress.ProgressChanged += (sender, e) =>
+            //{
+            //    var progress = e.TotalByteCount > 0 ? 100.0 * e.BytesTransferred / e.TotalByteCount : 0;
+            //};
+
+            //var stream = await reference.GetStreamAsync(downloadProgress);
+
+            await reference.GetFileAsync(filePath);
+            Console.WriteLine("Reference: "+ reference.Name);
+            return filePath;
+        }
+
+
         //add file to firebase storage
-        public async Task<bool> UploadAudioToCloud() {
+        public async Task<bool> UploadAudioToCloud()
+        {
             string recordedPath = reminder.RecordPath;
-            string[] recordPathArr= reminder.RecordPath.Split("/");
-            string newRecordPath = "/reminders/"+recordPathArr[recordPathArr.Length-1];
-            Console.WriteLine("RecordPath: "+newRecordPath);
+            string[] recordPathArr = reminder.RecordPath.Split("/");
+            string newRecordPath = "/reminders/" + recordPathArr[recordPathArr.Length - 1];
+            Console.WriteLine("RecordPath: " + newRecordPath);
 
             try
             {
@@ -112,80 +155,30 @@ namespace ReminderForOthers.Model
                 Console.WriteLine(ex.Message);
                 return false;
             }
-            
+
             return true;
-            
-        } 
 
-        //add file to firestore
-        public async Task<bool> SetReminderFirestore() 
-        {
-
-            await CrossCloudFirestore.Current
-                         .Instance
-                         .Collection("reminder")
-                         .AddAsync(reminder);
-            return false;
         }
 
-        
 
-        //adds reminder
-        //private async Task<bool> AddReminderLocallyAsync()
-        //{
-
-        //    IDictionary<int, Reminder> reminders = await GetRemindersAsync();
-        //    reminder.Id = reminders.Count;
-        //    //add the file
-        //    reminders.Add(reminder.Id, reminder);
-        //    string jsonFormat = JsonConvert.SerializeObject(reminders);
-        //    await File.WriteAllTextAsync(filePath, jsonFormat);
-        //    return (reminders.Count > 0);
-        //}
-
-
-        //public async Task<IDictionary<int, Reminder>> GetRemindersAsync()
-        //{
-        //    //create file if doesnt exists
-        //    if (!File.Exists(filePath))
-        //    {
-        //        File.WriteAllText(filePath, "");
-        //    }
-        //    //read file
-        //    string jsonFormat = await File.ReadAllTextAsync(filePath);
-
-        //    IDictionary<int, Reminder> reminders = null;
-
-        //    //empty file than return new object or else convert
-        //    if (string.IsNullOrEmpty(jsonFormat))
-        //    {
-        //        reminders = new Dictionary<int, Reminder>();
-        //    }
-        //    else
-        //    {
-        //        reminders = JsonConvert.DeserializeObject<IDictionary<int, Reminder>>(jsonFormat);
-        //    }
-        //    return reminders;
-        //}
-        ////filter the reminders depending on users [locally]
-        //public async Task<IDictionary<int, Reminder>> GetRemindersForUserAsync(string userTo)
-        //{
-        //    if (userTo == null) { return null; }
-
-        //    IDictionary<int, Reminder> reminders = await GetRemindersAsync();
-        //    IDictionary<int, Reminder> remindersForUser = new Dictionary<int, Reminder>();
-
-        //    foreach (var reminderInfo in reminders)
-        //    {
-        //        Reminder reminderDetails = reminderInfo.Value;
-        //        if (reminderDetails.UsernameTo == userTo)
-        //        {
-        //            remindersForUser.Add(reminderInfo.Key, reminderDetails);
-        //        }
-        //    }
-
-        //    return remindersForUser;
-        //}
+        //add file to firestore
+        public async Task<bool> SetReminderFirestore()
+        {
+            try
+            {
+                var doc = await CrossCloudFirestore.Current
+                          .Instance
+                          .Collection("reminder")
+                          .AddAsync(reminder);
+                Console.WriteLine(doc.Id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+            return true;
+        }
 
     }
 }

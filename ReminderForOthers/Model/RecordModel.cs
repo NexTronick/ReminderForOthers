@@ -94,5 +94,11 @@ namespace ReminderForOthers.Model
                 hasRecordedAudio = false;
             }
         }
+
+        //to play downloaded audio
+        public async Task PlayDownloadedAudio(string filePath) 
+        {
+            player.Play(filePath);
+        }
     }
 }
