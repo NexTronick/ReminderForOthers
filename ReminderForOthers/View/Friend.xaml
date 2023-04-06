@@ -38,13 +38,11 @@
             Margin="20,20,0,0"
             FontAttributes="Bold"
             FontSize="20"
-            Text="Friend Requests:"
-            TextColor="#222222" />
+            Text="Friend Requests:" />
         <Label
             Margin="20,5,0,0"
             FontSize="12"
-            Text="(Swipe from left to right to accept/decline friend request.)"
-            TextColor="#222222" />
+            Text="(Swipe from left to right to accept/decline friend request.)" />
         <!--  Swipe from left to right for more accept/decline friend request  -->
         <Border
             Margin="15"
@@ -125,8 +123,7 @@
                 Grid.Column="0"
                 FontAttributes="Bold"
                 FontSize="20"
-                Text="Friends list"
-                TextColor="#222222" />
+                Text="Friends list" />
             <Label
                 Grid.Row="0"
                 Grid.Column="1"
@@ -144,7 +141,7 @@
         <!--  List  -->
         <Border Margin="15,10,15,10" BackgroundColor="Transparent">
             <CollectionView
-                HeightRequest="360"
+                HeightRequest="270"
                 ItemsSource="{Binding ObserveFriendList}"
                 VerticalScrollBarVisibility="Always">
                 <CollectionView.EmptyView>

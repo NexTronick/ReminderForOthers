@@ -29,7 +29,7 @@ namespace ReminderForOthers.ViewModel
             friendRequests = new Dictionary<string, FriendRequest>();
             friends = new Dictionary<string, FriendRequest>();
             LoadFreindRequestsAsync();
-            LoadFriendListAsync();
+            Task loadFriends = LoadFriendListAsync();
 
         }
 
@@ -186,7 +186,7 @@ namespace ReminderForOthers.ViewModel
 
         //load friend list
         [RelayCommand]
-        public async void LoadFriendListAsync()
+        public async Task<List<FriendRequest>> LoadFriendListAsync()
         {
             string currentUsername = await loginModel.GetLogInCacheAsync();
             friends = await friendModel.GetFriendListAsync(currentUsername);
@@ -200,10 +200,12 @@ namespace ReminderForOthers.ViewModel
                     tempRequest.Username = currentUsername;
                     tempRequest.FriendUsername = tempUsername;
                 }
+                //Console.WriteLine("Friend Username: "+tempRequest.FriendUsername);
                 friendList.Add(tempRequest);
             }
             ObserveFriendList = new ObservableCollection<FriendRequest>(friendList);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveFriendList)));
+            return friendList;
         }
 
         //remove friend
