@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "966990088494",
+    "firebase_url": "https://reminderforothers-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "reminderforothers",
+    "storage_bucket": "reminderforothers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:966990088494:android:ef9299895ca0d7b52092bf",
+        "android_client_info": {
+          "package_name": "com.natrajpadwani.reminderforothers"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "966990088494-rs1vr2ee9hs2rjhte2ip4sg320ul3thd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.natrajpadwani.reminderforothers",
+            "certificate_hash": "0827e335a3e2556de8bfe1cb83eb67442d09ce7a"
+          }
+        },
+        {
+          "client_id": "966990088494-8ve2ahf9q7gucllbi4re85rics0vvaje.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRVy-OyNP7AM7r5p6_UXrAY6DPLj-wYo4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "966990088494-8ve2ahf9q7gucllbi4re85rics0vvaje.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

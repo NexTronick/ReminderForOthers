@@ -2,8 +2,9 @@
 using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Database.Query;
-
 using Newtonsoft.Json;
+using Plugin.CloudFirestore;
+using Plugin.FirebaseStorage;
 
 namespace ReminderForOthers.Model
 {
@@ -66,8 +67,12 @@ namespace ReminderForOthers.Model
             IDictionary<string, Reminder> reminders = await GetRemindersForUserAsync(reminder.UsernameTo);
             reminder.Id = reminders.Count+1;
 
+            //upload file to firebase storage cloud
+            await UploadAudioToCloud();
             //add now
             var response = await client.Child(nameof(Reminder)).PostAsync(reminder);
+            await SetReminderFirestore();
+
             if (response.Key == null) { return false; }
 
             Console.WriteLine("Reminder key: "+ response.Key);
@@ -89,6 +94,41 @@ namespace ReminderForOthers.Model
             }
             return reminders;
         }
+        //add file to firebase storage
+        public async Task<bool> UploadAudioToCloud() {
+            string recordedPath = reminder.RecordPath;
+            string[] recordPathArr= reminder.RecordPath.Split("/");
+            string newRecordPath = "/reminders/"+recordPathArr[recordPathArr.Length-1];
+            Console.WriteLine("RecordPath: "+newRecordPath);
+
+            try
+            {
+                var reference = CrossFirebaseStorage.Current.Instance.RootReference.Child(newRecordPath);
+                await reference.PutFileAsync(reminder.RecordPath);
+                reminder.RecordPath = newRecordPath;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+            
+            return true;
+            
+        } 
+
+        //add file to firestore
+        public async Task<bool> SetReminderFirestore() 
+        {
+
+            await CrossCloudFirestore.Current
+                         .Instance
+                         .Collection("reminder")
+                         .AddAsync(reminder);
+            return false;
+        }
+
+        
 
         //adds reminder
         //private async Task<bool> AddReminderLocallyAsync()

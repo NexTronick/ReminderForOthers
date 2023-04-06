@@ -89,6 +89,8 @@
 	  <PackageReference Include="FirebaseDatabase.net" Version="4.2.0" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 	  <PackageReference Include="Plugin.AudioRecorder" Version="1.1.0" />
+	  <PackageReference Include="Plugin.CloudFirestore" Version="4.1.0" />
+	  <PackageReference Include="Plugin.FirebaseStorage" Version="4.1.0" />
 	  <PackageReference Include="Plugin.LocalNotification" Version="10.0.3" />
 	  <PackageReference Include="Plugin.MauiAudio" Version="1.2.1" />
 	  <PackageReference Include="System.ObjectModel" Version="4.3.0" />
@@ -115,18 +117,13 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0-android'">
-	  <PackageReference Include="Plugin.Firebase">
-	    <Version>2.0.0</Version>
-	  </PackageReference>
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0-ios'">
-	  <PackageReference Include="Plugin.Firebase">
-	    <Version>2.0.0</Version>
-	  </PackageReference>
-	</ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="Platforms\Android\google-services.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <GoogleServicesJson Include="Platforms\Android\google-services.json" />
+  </ItemGroup>
 
   <PropertyGroup Condition="$(TargetFramework.Contains('-android')) and '$(Configuration)' == 'Release'">
     <AndroidKeyStore>True</AndroidKeyStore>
