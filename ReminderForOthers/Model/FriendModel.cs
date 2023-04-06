@@ -82,7 +82,7 @@ namespace ReminderForOthers.Model
                 IDictionary<string, FriendRequest> myFriendsRequest = new Dictionary<string, FriendRequest>();
                 foreach (var item in friendsRequests)
                 {
-                    Console.WriteLine("item key: " + item.Key);
+                   // Console.WriteLine("item key: " + item.Key);
                     FriendRequest temp = item.Object;
                     if (temp.FriendUsername == username && temp.Accept == 0)
                     {
