@@ -29,14 +29,12 @@ public partial class LoginViewModel : ObservableObject
         }
 
         LoginModel loginModel = new LoginModel();
-        int loginValid = await loginModel.ValidateUserLogin(username, password);
+        int loginValid = await loginModel.ValidateUserLogin(username, password, checkBox);
         Console.WriteLine($"Login Valid: {loginValid}");
         if (loginValid == 1)
         {
             //store to cache for logged In status true, username of the user. in a new method
-            //logged in
-            //await Shell.Current.GoToAsync(".."); //back to MainPage
-            await Shell.Current.GoToAsync("../" + nameof(Friend));
+            await Shell.Current.GoToAsync("//Home");
         }
         else
         {
@@ -48,7 +46,7 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     void CheckBoxTick()
     {
-        CheckBox = !CheckBox;
+        checkBox = !checkBox;
     }
     private bool CheckValidStr()
     {
