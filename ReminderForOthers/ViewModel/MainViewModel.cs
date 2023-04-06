@@ -6,12 +6,14 @@ using Plugin.AudioRecorder;
 using Plugin.SimpleAudioRecorder;
 using ReminderForOthers.Model;
 using ReminderForOthers.View;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace ReminderForOthers.ViewModel;
-public partial class MainViewModel : ObservableObject
+public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
 {
     [ObservableProperty]
-    string userTo;
+    int userToIndex;
 
     [ObservableProperty]
     string title;
@@ -22,6 +24,10 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     TimePicker selectedTime = new TimePicker();
 
+    //friend 
+    public event PropertyChangedEventHandler PropertyChanged;
+    public ObservableCollection<FriendRequest> ObserveFriendList { get; set; } = new ObservableCollection<FriendRequest>();
+
     //Recorder
     private RecordModel recordModel;
 
@@ -31,6 +37,17 @@ public partial class MainViewModel : ObservableObject
         selectedDate.MaximumDate = new DateTime(DateTime.Today.Year + 10, DateTime.Today.Month, DateTime.Today.Day);
         selectedTime.Time = DateTime.Now.TimeOfDay;
         recordModel = new RecordModel();
+        LoadFriends();
+
+    }
+    //to load the friendslist gotten method from friendsVM
+    private async void LoadFriends() 
+    {
+        FriendViewModel friendVM = new FriendViewModel();
+        List<FriendRequest> friends = await friendVM.LoadFriendListAsync();
+
+        ObserveFriendList = new ObservableCollection<FriendRequest>(friends);
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveFriendList)));
     }
 
     [RelayCommand]
@@ -102,15 +119,17 @@ public partial class MainViewModel : ObservableObject
     {
         //if this person is logged
         string username = await GetUserLoggedInAsync();
-        if (string.IsNullOrEmpty(username)) { await Shell.Current.GoToAsync(nameof(Login)); }
+        string userTo = ObserveFriendList.ToArray()[userToIndex].FriendUsername;
+
+        //if (string.IsNullOrEmpty(username)) { await Shell.Current.GoToAsync(nameof(Login)); }
 
         if (!ValidateReminder()) { return; }
-        bool userExists = await UserExists();
-        if (!userExists)
-        {
-            await App.Current.MainPage.DisplayAlert("Cannot Set Reminder", "Recipent Username does not exists. Please fill in correct Recipent Username.", "Okay");
-            return;
-        }
+        //bool userExists = await UserExists();
+        //if (!userExists)
+        //{
+        //    await App.Current.MainPage.DisplayAlert("Cannot Set Reminder", "Recipent Username does not exists. Please fill in correct Recipent Username.", "Okay");
+        //    return;
+        //}
 
         ReminderModel reminderModel = new ReminderModel(username, userTo, title, selectedDate.Date, selectedTime.Time, recordModel.GetRecordPath());
         bool stored = await reminderModel.StoreReminderAsync();
@@ -118,30 +137,26 @@ public partial class MainViewModel : ObservableObject
         {
 
             await App.Current.MainPage.DisplayAlert("Reminder Set", "Reminder is successfully set.", "Okay");
-            userTo = "";
+            userToIndex = 0;
             title = "";
             selectedDate.Date = DateTime.Now;
             selectedTime.Time = DateTime.Now.TimeOfDay;
             await DisposeRecordAudio();
         }
-        Console.WriteLine($"Title: {title} \nDate: {selectedDate.Date} Time: {selectedTime.Time} Time of Day: {DateTime.Now.TimeOfDay}");
-    }
-    private async Task<bool> UserExists()
-    {
-        SignUpModel signUpModel = new SignUpModel();
-        return await signUpModel.DoesUserNameExits(userTo);
+        //Console.WriteLine($"Title: {title} \nDate: {selectedDate.Date} Time: {selectedTime.Time} Time of Day: {DateTime.Now.TimeOfDay}");
     }
 
     private bool ValidateReminder()
     {
 
         //validate the username and title
-        if (!CheckStringValue(userTo, "Recipent Username")) { return false; }
+        //if (!CheckStringValue(userTo, "Recipent Username")) { return false; }
         if (!CheckStringValue(title, "Title")) { return false; }
 
 
         //validating the date and time
-        if (selectedTime.Time <= DateTime.Now.TimeOfDay)
+        long selectedDateTime = selectedDate.Date.Ticks + selectedTime.Time.Ticks;
+        if (selectedDateTime <= DateTime.Now.Ticks)
         {
             App.Current.MainPage.DisplayAlert("Cannot Set Reminder", "Time provided is not valid. Please choose another time.", "Okay");
             return false;
@@ -167,7 +182,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     //to check if user is logged in 
-    private async Task<string> GetUserLoggedInAsync()
+    public async Task<string> GetUserLoggedInAsync()
     {
         LoginModel loginModel = new LoginModel();
         string cache = await loginModel.GetLogInCacheAsync();
@@ -179,7 +194,7 @@ public partial class MainViewModel : ObservableObject
         //move to login page
         if (string.IsNullOrEmpty(await GetUserLoggedInAsync()))
         {
-            await Shell.Current.GoToAsync(nameof(Login));
+            await Shell.Current.GoToAsync("//Login");
         }
         //await Shell.Current.GoToAsync(nameof(Login));
     }
@@ -194,56 +209,10 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     public async Task CheckMyReminders()
     {
-        await Shell.Current.GoToAsync(nameof(PersonalReminders));
+        await Shell.Current.GoToAsync("//Home//"+nameof(PersonalReminders));
     }
 
-    public async Task<List<Reminder>> GetRemindersAsync()
-    {
-        ReminderModel reminderModel = new ReminderModel();
-        IDictionary<string, Reminder> currentUserReminders = await reminderModel.GetRemindersForUserAsync(await GetUserLoggedInAsync());
-        if (currentUserReminders == null) { return new List<Reminder>(); }
-
-        Reminder[] arrangedReminders = RearrangeDictionary(currentUserReminders);
-
-        return arrangedReminders.ToList();
-    }
-    //helper method to re arrange according to date and time
-    private Reminder[] RearrangeDictionary(IDictionary<string, Reminder> reminders)
-    {
-        Reminder[] reminderArr = ConvertToReminderArr(reminders);
-
-        for (int i = 0; i < reminderArr.Length; i++)
-        {
-            for (int j = reminderArr.Length - 1; j > i; j--)
-            {
-                Console.WriteLine($"Before switch, Reminder i:{reminderArr[i].Id}, Reminder j: {reminderArr[j].Id}");
-                if (reminderArr[i].PlayDateTime >= reminderArr[j].PlayDateTime)
-                {
-
-                    Reminder temp = reminderArr[i];
-                    reminderArr[i] = reminderArr[j];
-                    reminderArr[j] = temp;
-                    Console.WriteLine($"After switch, Reminder i:{reminderArr[i].Id}, Reminder j: {reminderArr[j].Id}");
-
-                }
-            }
-        }
-
-
-        return reminderArr;
-    }
-
-    private Reminder[] ConvertToReminderArr(IDictionary<string, Reminder> reminders)
-    {
-        Reminder[] reminderArr = new Reminder[reminders.Count];
-        int i = 0;
-        foreach (var reminder in reminders)
-        {
-            reminderArr[i++] = reminder.Value;
-        }
-        return reminderArr;
-    }
-
+    
 
     //default navigations
 
