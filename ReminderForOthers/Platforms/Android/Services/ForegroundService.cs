@@ -3,23 +3,21 @@ using Android.Content;
 using Android.OS;
 using Android.Runtime;
 using AndroidX.Core.App;
-using Microsoft.Maui.Controls.PlatformConfiguration;
 using ReminderForOthers.Platforms.Android.Services;
 using ReminderForOthers.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AndroidApp = Android.App.Application;
 
 //[assembly: Dependency(typeof(ForegroundService))]
 namespace ReminderForOthers.Platforms.Android.Services
 {
     [Service]
-    internal class ForegroundService : Service, IForegroundService
+    public class ForegroundService : Service, IForegroundService
     {
         private static bool isForegroundServiceRunning;
+        private static ReminderNotificationService reminderNotificationService = new ReminderNotificationService();
+        private static bool isReminderNotificationServiceRunning;
+        private static bool isFirstTimeRun;
+
         public override IBinder OnBind(Intent intent)
         {
             throw new NotImplementedException();
@@ -28,14 +26,22 @@ namespace ReminderForOthers.Platforms.Android.Services
         [return: GeneratedEnum]
         public override StartCommandResult OnStartCommand(Intent intent, [GeneratedEnum] StartCommandFlags flags, int startId)
         {
-            Task.Run(() =>
-            {
-                while (isForegroundServiceRunning)
-                {
-                    System.Diagnostics.Debug.WriteLine("Foreground service is Running");
-                    Thread.Sleep(2000);
-                }
-            });
+            //Task.Run(() =>
+            //{
+            //    while (isForegroundServiceRunning)
+            //    {
+            //        System.Diagnostics.Debug.WriteLine("Foreground service is Running");
+            //        Thread.Sleep(2000);
+            //    }
+            //});
+            
+            //reminder service 
+            reminderNotificationService.RunReminderServices(1000*60,1000);
+            reminderNotificationService.StartService();
+            
+            //friend request accepted service [to be added]
+
+
             string channelID = "ForegroundServiceChannel";
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             
@@ -53,11 +59,14 @@ namespace ReminderForOthers.Platforms.Android.Services
         public override void OnCreate()
         {
             isForegroundServiceRunning = true;
+            isReminderNotificationServiceRunning = true;
             base.OnCreate();
         }
         public override void OnDestroy()
         {
             isForegroundServiceRunning = false;
+            isReminderNotificationServiceRunning = false;
+            reminderNotificationService.StopService();
             base.OnDestroy();
         }
         public void Start()
