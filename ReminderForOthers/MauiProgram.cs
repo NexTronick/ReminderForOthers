@@ -32,7 +32,9 @@ public static class MauiProgram
         builder.Services.AddTransient<PersonalReminderViewModel>();
 
         builder.Services.AddTransient<Login>();
+        builder.Services.AddTransient<LoginModel>();
         builder.Services.AddTransient<LoginViewModel>();
+
 
         builder.Services.AddTransient<SignUp>();
         builder.Services.AddTransient<SignUpNext>();
@@ -43,6 +45,9 @@ public static class MauiProgram
         builder.Services.AddTransient<Friend>();
         builder.Services.AddTransient<FriendModel>();
         builder.Services.AddTransient<FriendViewModel>();
+
+		builder.Services.AddTransient<Settings>();
+        builder.Services.AddTransient<SettingsViewModel>();
 
         return builder.Build();
 	}

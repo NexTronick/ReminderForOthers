@@ -109,7 +109,7 @@ namespace ReminderForOthers.ViewModel
         }
 
         [RelayCommand]
-        async void PlayReminderAsync(string recordPath) 
+        public async void PlayReminderAsync(string recordPath) 
         {
             Console.WriteLine("RecordPath: "+recordPath);
             string filePath = await reminderModel.GetAudioFilePathAsync(recordPath);
