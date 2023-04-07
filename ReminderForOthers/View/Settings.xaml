@@ -34,17 +34,51 @@
             </HorizontalStackLayout>
         </Border>
 
-        <Label Text="{Binding CurrentUser}" TextColor="Black" />
-        <Label
-            Margin="5,10,15,0"
-            FontAttributes="Italic"
-            FontSize="18"
-            HorizontalOptions="End"
-            Text="Logout"
-            TextDecorations="Underline">
-            <Label.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding LogoutUserCommand}" />
-            </Label.GestureRecognizers>
-        </Label>
+        <Grid
+            Margin="30,10,25,10"
+            ColumnDefinitions="0.5*,0.5*"
+            RowDefinitions="auto">
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalOptions="Start"
+                Text="{Binding CurrentUser, StringFormat='Welcome: {0}'}"
+                TextColor="Black" />
+            <Label
+                Grid.Row="0"
+                Grid.Column="1"
+                FontAttributes="Italic"
+                FontSize="18"
+                HorizontalOptions="End"
+                Text="Logout"
+                TextDecorations="Underline">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding LogoutUserCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+        </Grid>
+
+
+        <Grid
+            Margin="0,20,0,0"
+            ColumnDefinitions="0.7*,0.3*"
+            RowDefinitions="auto">
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalTextAlignment="Center"
+                Text="Toggle Background Notification: "
+                VerticalTextAlignment="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CheckForegroundCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+            <CheckBox
+                Grid.Row="0"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                IsChecked="{Binding ForegroundChecked}" />
+        </Grid>
+
     </StackLayout>
 </ContentPage>

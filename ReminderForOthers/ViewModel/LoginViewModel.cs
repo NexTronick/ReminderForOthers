@@ -2,10 +2,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ReminderForOthers.Model;
 using ReminderForOthers.View;
+using System.ComponentModel;
 
 namespace ReminderForOthers.ViewModel;
 
-public partial class LoginViewModel : ObservableObject
+public partial class LoginViewModel : ObservableObject, INotifyPropertyChanged
 {
     [ObservableProperty]
     string username;
@@ -13,8 +14,21 @@ public partial class LoginViewModel : ObservableObject
     [ObservableProperty]
     string password;
 
-    [ObservableProperty]
-    bool checkBox;
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private bool _checkBox;
+    public bool CheckBox
+    {
+        get => _checkBox;
+        set
+        {
+            if (_checkBox != value)
+            {
+                CheckBoxToggled(value);
+            }
+        }
+    }
+
 
     [RelayCommand]
     async void LoginUser()
@@ -29,7 +43,7 @@ public partial class LoginViewModel : ObservableObject
         }
 
         LoginModel loginModel = new LoginModel();
-        int loginValid = await loginModel.ValidateUserLogin(username, password, checkBox);
+        int loginValid = await loginModel.ValidateUserLogin(username, password, _checkBox);
         Console.WriteLine($"Login Valid: {loginValid}");
         if (loginValid == 1)
         {
@@ -46,8 +60,16 @@ public partial class LoginViewModel : ObservableObject
     [RelayCommand]
     void CheckBoxTick()
     {
-        checkBox = !checkBox;
+        CheckBoxToggled(!_checkBox);
     }
+
+    private void CheckBoxToggled(bool check) 
+    {
+        _checkBox = check;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CheckBox)));
+
+    }
+
     private bool CheckValidStr()
     {
         return !string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password);
