@@ -30,22 +30,24 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
 
     //Recorder
     private RecordModel recordModel;
-
+    private FriendModel friendModel;
     public MainViewModel()
     {
         selectedDate.MinimumDate = DateTime.Today;
         selectedDate.MaximumDate = new DateTime(DateTime.Today.Year + 10, DateTime.Today.Month, DateTime.Today.Day);
         selectedTime.Time = DateTime.Now.TimeOfDay;
         recordModel = new RecordModel();
+        friendModel = new FriendModel();
         LoadFriends();
 
     }
     //to load the friendslist gotten method from friendsVM
     private async void LoadFriends() 
     {
-        FriendViewModel friendVM = new FriendViewModel();
-        List<FriendRequest> friends = await friendVM.LoadFriendListAsync();
-
+        LoginModel loginModel = new LoginModel();
+        string currentUser = await loginModel.GetLogInCacheAsync();
+        IDictionary<string, FriendRequest> friendsDic = await friendModel.GetFriendDictionaryAsync(currentUser);
+        List<FriendRequest> friends = friendModel.ConvertToListFriendRequestObj(currentUser, friendsDic);
         ObserveFriendList = new ObservableCollection<FriendRequest>(friends);
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveFriendList)));
     }
@@ -121,27 +123,31 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         string username = await GetUserLoggedInAsync();
         string userTo = ObserveFriendList.ToArray()[userToIndex].FriendUsername;
 
-        //if (string.IsNullOrEmpty(username)) { await Shell.Current.GoToAsync(nameof(Login)); }
-
         if (!ValidateReminder()) { return; }
-        //bool userExists = await UserExists();
-        //if (!userExists)
-        //{
-        //    await App.Current.MainPage.DisplayAlert("Cannot Set Reminder", "Recipent Username does not exists. Please fill in correct Recipent Username.", "Okay");
-        //    return;
-        //}
 
-        ReminderModel reminderModel = new ReminderModel(username, userTo, title, selectedDate.Date, selectedTime.Time, recordModel.GetRecordPath());
+        //set all the values for reminders
+        Reminder reminder = new Reminder();
+        reminder.UsernameFrom = username;
+        reminder.UsernameTo = userTo;
+        reminder.Title = title;
+        reminder.PlayDateTime = selectedDate.Date.AddTicks(selectedTime.Time.Ticks);
+        reminder.RecordPath = recordModel.GetRecordPath();
+        reminder.ReminderCreationTime = DateTime.Now;
+
+        //store reminders
+        ReminderModel reminderModel = new ReminderModel(reminder);
         bool stored = await reminderModel.StoreReminderAsync();
         if (stored)
         {
 
-            await App.Current.MainPage.DisplayAlert("Reminder Set", "Reminder is successfully set.", "Okay");
+           
             userToIndex = 0;
             title = "";
             selectedDate.Date = DateTime.Now;
             selectedTime.Time = DateTime.Now.TimeOfDay;
             await DisposeRecordAudio();
+            await Shell.Current.GoToAsync("//Home//" + nameof(PersonalReminders));
+            await App.Current.MainPage.DisplayAlert("Reminder Set", "Reminder is successfully set.", "Okay");
         }
         //Console.WriteLine($"Title: {title} \nDate: {selectedDate.Date} Time: {selectedTime.Time} Time of Day: {DateTime.Now.TimeOfDay}");
     }
@@ -188,24 +194,7 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         string cache = await loginModel.GetLogInCacheAsync();
         return cache;
     }
-    [RelayCommand]
-    public async Task GotoLoginPageAsync()
-    {
-        //move to login page
-        if (string.IsNullOrEmpty(await GetUserLoggedInAsync()))
-        {
-            await Shell.Current.GoToAsync("//Login");
-        }
-        //await Shell.Current.GoToAsync(nameof(Login));
-    }
-
-    [RelayCommand]
-    public async Task LogoutUserAsync()
-    {
-        LoginModel loginModel = new LoginModel();
-        loginModel.Logout();
-        await GotoLoginPageAsync();
-    }
+    
     [RelayCommand]
     public async Task CheckMyReminders()
     {

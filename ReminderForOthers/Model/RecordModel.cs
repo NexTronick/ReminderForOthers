@@ -1,4 +1,5 @@
 ﻿
+
 using Plugin.AudioRecorder;
 using Plugin.SimpleAudioRecorder;
 using System;
@@ -59,7 +60,6 @@ namespace ReminderForOthers.Model
         {
             //doesnt play audio
             if (!hasRecordedAudio) { return false; }
-
             player.Pause();
             return true;
         }
@@ -96,9 +96,15 @@ namespace ReminderForOthers.Model
         }
 
         //to play downloaded audio
-        public async Task PlayDownloadedAudio(string filePath) 
+        public bool PlayDownloadedAudio(string filePath) 
         {
+            if (!File.Exists(filePath)) { return false; }
             player.Play(filePath);
+            return true;
         }
+
+        
+
+       
     }
 }

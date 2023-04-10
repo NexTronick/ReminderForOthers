@@ -28,8 +28,10 @@ public static class MauiProgram
         builder.Services.AddTransient<RecordModel>();
 		builder.Services.AddTransient<ReminderModel>();
 
-        builder.Services.AddTransient<PersonalReminders>();
+
         builder.Services.AddTransient<PersonalReminderViewModel>();
+        builder.Services.AddTransient<PersonalReminders>();
+        
 
         builder.Services.AddTransient<Login>();
         builder.Services.AddTransient<LoginModel>();

@@ -34,10 +34,24 @@ namespace ReminderForOthers.Platforms.Android.Services
             //        Thread.Sleep(2000);
             //    }
             //});
-            
+            System.Diagnostics.Debug.WriteLine("StartedID: "+startId);
             //reminder service 
-            reminderNotificationService.RunReminderServices(1000*60,1000);
-            reminderNotificationService.StartService();
+            Task.Run(() =>
+            {
+                Thread.Sleep(1000); //run after 1 second
+                try
+                {
+                    reminderNotificationService.RunReminderServices(1000 * 10, 1000);
+                    reminderNotificationService.StartService();
+                }
+                catch (Exception ex)
+                {
+
+                    System.Diagnostics.Debug.WriteLine("Foreground Message: " + ex.Message);
+                }
+            });
+            
+          
             
             //friend request accepted service [to be added]
 
@@ -50,7 +64,7 @@ namespace ReminderForOthers.Platforms.Android.Services
                 var notificationChannel = new NotificationChannel(channelID, channelID, NotificationImportance.Low);
                 notificationManager.CreateNotificationChannel(notificationChannel);
             }
-
+     
             var notificationBuilder = new NotificationCompat.Builder(this, channelID).SetContentTitle("ForegroundServiceStarted").SetSmallIcon(Resource.Mipmap.appicon).SetContentText("Service Running in Foreground").SetPriority(1).SetOngoing(true).SetChannelId(channelID).SetAutoCancel(true);
             StartForeground(10001, notificationBuilder.Build());
             return base.OnStartCommand(intent, flags, startId);

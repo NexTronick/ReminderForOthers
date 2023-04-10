@@ -74,7 +74,7 @@ namespace ReminderForOthers.Model
         // }
 
         //request async
-        public async Task<IDictionary<string, FriendRequest>> GetFriendRequestAsync(string username)
+        public async Task<IDictionary<string, FriendRequest>> GetFriendRequestDictionaryAsync(string username)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace ReminderForOthers.Model
         }
 
         //get friend list async
-        public async Task<IDictionary<string, FriendRequest>> GetFriendListAsync(string username)
+        public async Task<IDictionary<string, FriendRequest>> GetFriendDictionaryAsync(string username)
         {
             try
             {
@@ -122,6 +122,25 @@ namespace ReminderForOthers.Model
                 return new Dictionary<string, FriendRequest>();
             }
 
+        }
+
+        //convert to friend list
+        public List<FriendRequest> ConvertToListFriendRequestObj(string currentUsername, IDictionary<string,FriendRequest> freindsDic) 
+        {
+            List<FriendRequest> friendList = new List<FriendRequest>();
+            foreach (var item in freindsDic)
+            {
+                FriendRequest tempRequest = item.Value;
+                if (tempRequest.FriendUsername == currentUsername)
+                {
+                    string tempUsername = item.Value.Username;
+                    tempRequest.Username = currentUsername;
+                    tempRequest.FriendUsername = tempUsername;
+                }
+                //Console.WriteLine("Friend Username: "+tempRequest.FriendUsername);
+                friendList.Add(tempRequest);
+            }
+            return friendList;
         }
 
         //accept freind request database

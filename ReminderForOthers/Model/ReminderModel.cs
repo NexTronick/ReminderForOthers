@@ -35,16 +35,9 @@ namespace ReminderForOthers.Model
             filePath = Path.Combine(FileSystem.Current.AppDataDirectory, fileName);
         }
 
-        public ReminderModel(string usernameFrom, string usernameTo, string title, DateTime date, TimeSpan time, string recordPath)
+        public ReminderModel(Reminder reminder)
         {
-            //set all the values for reminders
-            reminder = new Reminder();
-            reminder.UsernameFrom = usernameFrom;
-            reminder.UsernameTo = usernameTo;
-            reminder.Title = title;
-            reminder.PlayDateTime = date.AddTicks(time.Ticks);
-            reminder.RecordPath = recordPath;
-            reminder.ReminderCreationTime = DateTime.Now;
+            this.reminder = reminder;
 
             Console.WriteLine("PlayDateTime: " + reminder.PlayDateTime);
             filePath = Path.Combine(FileSystem.Current.AppDataDirectory, fileName);
@@ -64,7 +57,7 @@ namespace ReminderForOthers.Model
         private async Task<bool> AddReminderCloudAsync()
         {
             //get reminders first
-            List<Reminder> reminders = await GetReceivedRemindersAsync(reminder.UsernameTo);
+            List<Reminder> reminders = ConvertToListReminder(await GetReceivedRemindersAsync(reminder.UsernameTo));
             reminder.Id = reminders.Count + 1;
 
             //upload audio file to firebase storage cloud
@@ -81,57 +74,133 @@ namespace ReminderForOthers.Model
         }
 
         //get reminder for userTo
-        public async Task<List<Reminder>> GetReceivedRemindersAsync(string userTo)
+        public async Task<IDictionary<string, Reminder>> GetReceivedRemindersAsync(string userTo)
         {
             var queryUserTo = await CrossCloudFirestore.Current
                                                  .Instance
                                                  .Collection("reminder")
                                                  .WhereEqualsTo("UsernameTo", userTo)
                                                  .GetAsync();
+            var remindersSent = queryUserTo.ToObjects<Reminder>();
 
-            var remindersReceived = queryUserTo.ToObjects<Reminder>();
-            foreach (var item in remindersReceived)
-            {
-                Console.WriteLine($"GetReceivedRemindersAsync UsernameFrom: {item.UsernameFrom} to UsernameTo: {item.UsernameTo}");
-            }
-            return remindersReceived.ToList<Reminder>();
+            //returns dictionary after sorting (key : documentID) : (value: Reminder)
+            string[] documentIDs = GetDocumentIDs(queryUserTo.Documents.ToList());
+            return SortRemindersByDateAsc(documentIDs, remindersSent.ToArray<Reminder>());
         }
+
         //get reminder that user sent
-        public async Task<List<Reminder>> GetSentRemindersAsync(string userFrom)
+        public async Task<IDictionary<string,Reminder>> GetSentRemindersAsync(string userFrom)
         {
             var queryUserFrom = await CrossCloudFirestore.Current
                                                  .Instance
                                                  .Collection("reminder")
                                                  .WhereEqualsTo("UsernameFrom", userFrom)
                                                  .GetAsync();
-
             var remindersSent = queryUserFrom.ToObjects<Reminder>();
-            foreach (var item in remindersSent)
-            {
-                Console.WriteLine($"GetSentRemindersAsync UsernameFrom: {item.UsernameFrom} to UsernameTo: {item.UsernameTo}");
-            }
-            Console.WriteLine($"GetSentRemindersAsync remindersSent: {remindersSent.Count()}");
-            return remindersSent.ToList<Reminder>();
+
+            //returns dictionary after sorting (key : documentID) : (value: Reminder)
+            string[] documentIDs = GetDocumentIDs(queryUserFrom.Documents.ToList());
+            return SortRemindersByDateAsc(documentIDs, remindersSent.ToArray<Reminder>());
 
         }
 
+        //helper method for returning documents ids
+        private string[] GetDocumentIDs(List<IDocumentSnapshot> documents)
+        {
+            List<string> documentIDs = new List<string>();
+            documents.ForEach((item) => { documentIDs.Add(item.Id); });
+            return documentIDs.ToArray();
+        }
+
+        //helper method to re arrange according to date and time
+        private IDictionary<string, Reminder> SortRemindersByDateAsc(string[] documentIDs, Reminder[] reminders)
+        {
+            for (int i = 0; i < reminders.Length; i++)
+            {
+                for (int j = reminders.Length - 1; j > i; j--)
+                {
+                    //Console.WriteLine($"Before switch, Reminder i:{reminders[i].Id}, Reminder j: {reminders[j].Id}");
+                    if (reminders[i].PlayDateTime >= reminders[j].PlayDateTime)
+                    {
+                        //rearrange reminder
+                        Reminder reTemp = reminders[i];
+                        reminders[i] = reminders[j];
+                        reminders[j] = reTemp;
+
+                        //rearrange documentId
+                        string idTemp = documentIDs[i];
+                        documentIDs[i] = documentIDs[j];
+                        documentIDs[j] = idTemp;
+
+                        //Console.WriteLine($"After switch, Reminder i:{reminders[i].Id}, Reminder j: {reminders[j].Id}");
+                    }
+                }
+            }
+
+            return ConvertToDictionary(documentIDs,reminders);
+        }
+
+
+        //conver to IDictionary
+        private IDictionary<string, Reminder> ConvertToDictionary(string[] documentIDs, Reminder[] reminders) 
+        {
+            IDictionary<string, Reminder> remindersDic = new Dictionary<string, Reminder>();
+
+            for (int i = 0; i < reminders.Length; i++)
+            {
+                remindersDic.Add(documentIDs[i], reminders[i]);
+            }
+
+            return remindersDic;
+        }
+
+        //convert from IDictionary To Reminder List
+        public List<Reminder> ConvertToListReminder(IDictionary<string, Reminder> remindersDic)
+        {
+            List<Reminder> reminders = new List<Reminder>();
+
+            foreach (var item in remindersDic)
+            {
+                Reminder temp = item.Value;
+                reminders.Add(temp);
+            }
+
+            return reminders;
+        }
+
+        //convert from IDictionary To documentID List
+        public List<string> ConvertToListDocumentID(IDictionary<string, Reminder> remindersDic)
+        {
+            List<string> documentIDs = new List<string>();
+
+            foreach (var item in remindersDic)
+            {
+                string temp = item.Key;
+                documentIDs.Add(temp);
+            }
+
+            return documentIDs;
+        }
+
         //get audio from cloud
-        public async Task<string> GetAudioFilePathAsync(string path) 
+        public async Task<string> GetAudioFilePathAsync(string path)
         {
             string fileName = path.Split("/")[1];
             string filePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
 
-            var reference = CrossFirebaseStorage.Current.Instance.RootReference.Child(path);
-            //var downloadProgress = new Progress<IDownloadState>();
-            //downloadProgress.ProgressChanged += (sender, e) =>
-            //{
-            //    var progress = e.TotalByteCount > 0 ? 100.0 * e.BytesTransferred / e.TotalByteCount : 0;
-            //};
+            try
+            {
+                var reference = CrossFirebaseStorage.Current.Instance.RootReference.Child(path);
+                await reference.GetFileAsync(filePath);
+                //Console.WriteLine("Reference: " + reference.Name);
+            }
+            catch (Exception ex)
+            {
 
-            //var stream = await reference.GetStreamAsync(downloadProgress);
+                Console.WriteLine(ex.Message);
+                return null;
+            }
 
-            await reference.GetFileAsync(filePath);
-            Console.WriteLine("Reference: "+ reference.Name);
             return filePath;
         }
 
@@ -170,10 +239,31 @@ namespace ReminderForOthers.Model
                           .Instance
                           .Collection("reminder")
                           .AddAsync(reminder);
-                Console.WriteLine(doc.Id);
+                //Console.WriteLine(doc.Id);
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
+                return false;
+            }
+            return true;
+        }
+
+        //remove from database
+
+        public async Task<bool> RemoveReminderFirestore(string documentID)
+        {
+            try
+            {
+                await CrossCloudFirestore.Current
+                          .Instance
+                          .Collection("reminder")
+                          .Document(documentID)
+                          .DeleteAsync();
+            }
+            catch (Exception ex)
+            {
+
                 Console.WriteLine(ex.Message);
                 return false;
             }

@@ -29,7 +29,7 @@ namespace ReminderForOthers.ViewModel
             friendRequests = new Dictionary<string, FriendRequest>();
             friends = new Dictionary<string, FriendRequest>();
             LoadFreindRequestsAsync();
-            Task loadFriends = LoadFriendListAsync();
+            LoadFriendListAsync();
 
         }
 
@@ -141,21 +141,9 @@ namespace ReminderForOthers.ViewModel
         public async void LoadFreindRequestsAsync()
         {
             string currentUsername = await loginModel.GetLogInCacheAsync();
-            friendRequests = await friendModel.GetFriendRequestAsync(currentUsername);
-            List<FriendRequest> requests = new List<FriendRequest>();
-            foreach (var item in friendRequests)
-            {
-                FriendRequest tempRequest = item.Value;
-                if (tempRequest.FriendUsername == currentUsername)
-                {
-                    string tempUsername = item.Value.Username;
-                    tempRequest.Username = currentUsername;
-                    tempRequest.FriendUsername = tempUsername;
-                }
-                requests.Add(tempRequest);
-            }
+            friendRequests = await friendModel.GetFriendRequestDictionaryAsync(currentUsername);
+            List<FriendRequest> requests = friendModel.ConvertToListFriendRequestObj(currentUsername,friendRequests);
             ObserveFriendRequests = new ObservableCollection<FriendRequest>(requests);
-
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveFriendRequests)));
         }
 
@@ -185,27 +173,14 @@ namespace ReminderForOthers.ViewModel
 
 
         //load friend list
-        [RelayCommand]
-        public async Task<List<FriendRequest>> LoadFriendListAsync()
+        public async void LoadFriendListAsync()
         {
             string currentUsername = await loginModel.GetLogInCacheAsync();
-            friends = await friendModel.GetFriendListAsync(currentUsername);
-            List<FriendRequest> friendList = new List<FriendRequest>();
-            foreach (var item in friends)
-            {
-                FriendRequest tempRequest = item.Value;
-                if (tempRequest.FriendUsername == currentUsername)
-                {
-                    string tempUsername = item.Value.Username;
-                    tempRequest.Username = currentUsername;
-                    tempRequest.FriendUsername = tempUsername;
-                }
-                //Console.WriteLine("Friend Username: "+tempRequest.FriendUsername);
-                friendList.Add(tempRequest);
-            }
+            friends = await friendModel.GetFriendDictionaryAsync(currentUsername);
+            List<FriendRequest> friendList = friendModel.ConvertToListFriendRequestObj(currentUsername,friends);
             ObserveFriendList = new ObservableCollection<FriendRequest>(friendList);
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveFriendList)));
-            return friendList;
+
         }
 
         //remove friend

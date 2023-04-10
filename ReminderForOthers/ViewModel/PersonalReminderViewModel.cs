@@ -9,118 +9,109 @@ using System.ComponentModel;
 
 namespace ReminderForOthers.ViewModel
 {
-    public partial class PersonalReminderViewModel : ObservableObject,INotifyPropertyChanged
+    public partial class PersonalReminderViewModel : ObservableObject
     {
         [ObservableProperty]
         bool isReminderSentRefreshed;
         [ObservableProperty]
         bool isReminderReceivedRefreshed;
 
-        public ObservableCollection<Reminder> ObserveReminders { get; set; } = new ObservableCollection<Reminder>();
-        public ObservableCollection<Reminder> ObserveSentReminders { get; set; } = new ObservableCollection<Reminder>();
-        public event PropertyChangedEventHandler PropertyChanged;
+        public ObservableCollection<Reminder> ReceviedReminders { get; } = new();
+        public ObservableCollection<Reminder> SentReminders { get; } = new();
 
         private MainViewModel mainViewModel;
         private ReminderModel reminderModel;
         private RecordModel recordModel;
+        private LoginModel loginModel;
 
 
+        private IDictionary<string, Reminder> reminderReceiveDic;
+        private IDictionary<string, Reminder> reminderSentDic;
         public PersonalReminderViewModel()
         {
             mainViewModel = new MainViewModel();
             reminderModel = new ReminderModel();
             recordModel = new RecordModel();
-            LoadData(); 
-            LoadSentData();
-        }
-
-        public async void LoadData()
-        {
-            //load reminders have received
-            List<Reminder> reminders = await GetRemindersAsync();
-            ObserveReminders = new ObservableCollection<Reminder>(reminders);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveReminders)));
-        }
-        public async void LoadSentData() 
-        {
-            //load reminders that were sent
-            List<Reminder> reminderSent = await GetRemindersSentAsync();
-            ObserveSentReminders = new ObservableCollection<Reminder>(reminderSent);
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ObserveSentReminders)));
+            loginModel = new LoginModel();
+            Task receivedRemindersTask = RefreshReceivedReminders();
+            Task sentRemindersTask = RefreshSentReminders();
         }
 
         //gets reminders sent to friend user
-        public async Task<List<Reminder>> GetRemindersSentAsync()
+        private async Task<List<Reminder>> GetRemindersSentAsync()
         {
-
-            List<Reminder> remindersSent = await reminderModel.GetSentRemindersAsync(await mainViewModel.GetUserLoggedInAsync());
-            if (remindersSent == null) { return new List<Reminder>(); }
-
-            Reminder[] arrangedReminders = RearrangeDictionary(remindersSent.ToArray());
-
-            return arrangedReminders.ToList();
+            reminderSentDic = await reminderModel.GetSentRemindersAsync(await loginModel.GetLogInCacheAsync());
+            return reminderModel.ConvertToListReminder(reminderSentDic);
         }
 
         //gets reminders to current user
-        public async Task<List<Reminder>> GetRemindersAsync()
+        private async Task<List<Reminder>> GetRemindersAsync()
         {
-
-            List<Reminder> currentUserReminders = await reminderModel.GetReceivedRemindersAsync(await mainViewModel.GetUserLoggedInAsync());
-            if (currentUserReminders == null) { return new List<Reminder>(); }
-
-            Reminder[] arrangedReminders = RearrangeDictionary(currentUserReminders.ToArray());
-
-            return arrangedReminders.ToList();
+            reminderReceiveDic = await reminderModel.GetReceivedRemindersAsync(await loginModel.GetLogInCacheAsync());
+            return reminderModel.ConvertToListReminder(reminderReceiveDic);
         }
 
-        //helper method to re arrange according to date and time
-        private Reminder[] RearrangeDictionary(Reminder[] reminders)
-        {
-            for (int i = 0; i < reminders.Length; i++)
-            {
-                for (int j = reminders.Length - 1; j > i; j--)
-                {
-                    //Console.WriteLine($"Before switch, Reminder i:{reminders[i].Id}, Reminder j: {reminders[j].Id}");
-                    if (reminders[i].PlayDateTime >= reminders[j].PlayDateTime)
-                    {
-                        Reminder temp = reminders[i];
-                        reminders[i] = reminders[j];
-                        reminders[j] = temp;
-                        Console.WriteLine($"After switch, Reminder i:{reminders[i].Id}, Reminder j: {reminders[j].Id}");
-                    }
-                }
-            }
-            return reminders;
-        }
 
         //refresh view
         [RelayCommand]
-        void RefreshReceivedReminders()
+        async Task RefreshReceivedReminders()
         {
-            LoadData();
-            isReminderReceivedRefreshed = true;
+            try
+            {
+                List<Reminder> reminders = await GetRemindersAsync();
+                if (reminders.Count == ReceviedReminders.Count)
+                {
+                    IsReminderReceivedRefreshed = false;
+                    return;
+                }
+
+                ReceviedReminders.Clear();
+                foreach (var reminder in reminders)
+                {
+                    ReceviedReminders.Add(reminder);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+            }
+            IsReminderReceivedRefreshed = false;
         }
 
         [RelayCommand]
-        void RefreshSentReminders() 
+        async Task RefreshSentReminders()
         {
-            LoadSentData();
-            isReminderSentRefreshed = true;
+            try
+            {
+                List<Reminder> reminders = await GetRemindersSentAsync();
+                if (reminders.Count == SentReminders.Count)
+                {
+                    IsReminderSentRefreshed = false;
+                    return;
+                }
+
+                SentReminders.Clear();
+                foreach (var reminder in reminders)
+                {
+                    SentReminders.Add(reminder);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+            }
+            IsReminderSentRefreshed = false;
         }
 
         [RelayCommand]
-        public async void PlayReminderAsync(string recordPath) 
+        public async void PlayReminderAsync(string recordPath)
         {
-            Console.WriteLine("RecordPath: "+recordPath);
+            //Console.WriteLine("RecordPath: "+recordPath);
             string filePath = await reminderModel.GetAudioFilePathAsync(recordPath);
-            await recordModel.PlayDownloadedAudio(filePath);
-        }
-
-        [RelayCommand]
-        public async Task LogoutUserAsync()
-        {
-            await Shell.Current.GoToAsync("..");
-            await mainViewModel.LogoutUserAsync();
+            //Console.WriteLine("File duration: "+ReminderAudio.AudioDuration(filePath));
+            recordModel.PlayDownloadedAudio(filePath);
         }
 
         //default navigations

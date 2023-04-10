@@ -40,7 +40,7 @@
 
         <Border Margin="20,10,20,10">
             <RefreshView Command="{Binding RefreshReceivedRemindersCommand}" IsRefreshing="{Binding IsReminderReceivedRefreshed}">
-                <CollectionView HeightRequest="250" ItemsSource="{Binding ObserveReminders}">
+                <CollectionView HeightRequest="250" ItemsSource="{Binding ReceviedReminders}">
                     <CollectionView.EmptyView>
                         <Label Margin="20" Text="There are no reminders here." />
                     </CollectionView.EmptyView>
@@ -133,7 +133,7 @@
             VerticalOptions="Center" />
         <Border Margin="20,10,20,10">
             <RefreshView Command="{Binding RefreshSentRemindersCommand}" IsRefreshing="{Binding IsReminderSentRefreshed}">
-                <CollectionView HeightRequest="250" ItemsSource="{Binding ObserveSentReminders}">
+                <CollectionView HeightRequest="250" ItemsSource="{Binding SentReminders}">
                     <CollectionView.EmptyView>
                         <Label Margin="20" Text="There are no reminders here." />
                     </CollectionView.EmptyView>
@@ -217,38 +217,6 @@
                 </CollectionView>
             </RefreshView>
         </Border>
-        <!--  Navigation btns  -->
-        <!--<BoxView VerticalOptions="FillAndExpand" Color="Transparent" />
-        <Grid
-            Padding="0,15,0,15"
-            BackgroundColor="#2b579a"
-            ColumnDefinitions="0.25*,0.25*,0.25*,0.25*"
-            RowDefinitions="auto"
-            VerticalOptions="End">
-            <ImageButton
-                Grid.Column="0"
-                Command="{Binding GotoHomeCommand}"
-                HeightRequest="30"
-                Source="icons/home.png"
-                WidthRequest="105" />
-            <ImageButton
-                Grid.Column="1"
-                Command="{Binding GotoSetReminderCommand}"
-                HeightRequest="30"
-                Source="Resources/Images/icons/reminder.png"
-                WidthRequest="105" />
-            <ImageButton
-                Grid.Column="2"
-                Command="{Binding GotoFriendsCommand}"
-                HeightRequest="30"
-                Source="icons/friends.png"
-                WidthRequest="105" />
-            <ImageButton
-                Grid.Column="3"
-                Command="{Binding GotoSettingsCommand}"
-                HeightRequest="30"
-                Source="icons/settings.png"
-                WidthRequest="105" />
-        </Grid>-->
+
     </StackLayout>
 </ContentPage>

@@ -1,6 +1,7 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ReminderForOthers.Model;
 //using ReminderForOthers.Platforms.Android.Services;
 using ReminderForOthers.Services;
 using System.ComponentModel;
@@ -28,17 +29,16 @@ namespace ReminderForOthers.ViewModel
             }
         }
 
-        private MainViewModel mainViewModel;
-
+        private LoginModel loginModel;
         public SettingsViewModel()
         {
-            mainViewModel = new MainViewModel();
+            loginModel = new LoginModel();
             SetCurrentUser();
         }
 
         private async void SetCurrentUser()
         {
-            currentUser = await mainViewModel.GetUserLoggedInAsync();
+            currentUser = await loginModel.GetLogInCacheAsync();
         }
 
 
@@ -75,8 +75,20 @@ namespace ReminderForOthers.ViewModel
         [RelayCommand]
         public async Task LogoutUserAsync()
         {
-            //await Shell.Current.GoToAsync("..");
-            await mainViewModel.LogoutUserAsync();
+            loginModel.Logout();
+            await GotoLoginPageAsync();
         }
+
+        public async Task GotoLoginPageAsync()
+        {
+            //move to login page
+            if (string.IsNullOrEmpty(currentUser))
+            {
+                await Shell.Current.GoToAsync("//Login");
+            }
+            //await Shell.Current.GoToAsync(nameof(Login));
+        }
+
+        
     }
 }
