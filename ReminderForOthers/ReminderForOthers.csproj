@@ -62,6 +62,9 @@
 	  <None Remove="Resources\Images\icons\search.svg" />
 	  <None Remove="Resources\Images\icons\settings.png" />
 	  <None Remove="Resources\Images\icons\unfriend.png" />
+	  <None Remove="Resources\Raw\notification.wav" />
+	  <None Remove="Resources\Raw\start-record-audio.wav" />
+	  <None Remove="Resources\Raw\stop-record-audio.wav" />
 	</ItemGroup>
   
 	<ItemGroup>
@@ -92,7 +95,7 @@
 	  <PackageReference Include="Plugin.CloudFirestore" Version="4.1.0" />
 	  <PackageReference Include="Plugin.FirebaseStorage" Version="4.1.0" />
 	  <PackageReference Include="Plugin.LocalNotification" Version="10.0.3" />
-	  <PackageReference Include="Plugin.MauiAudio" Version="1.2.1" />
+	  <PackageReference Include="Plugin.Maui.Audio" Version="1.0.0" />
 	  <PackageReference Include="System.ObjectModel" Version="4.3.0" />
 	  <PackageReference Include="Xam.Plugin.SimpleAudioRecorder" Version="0.9.0" />
 	</ItemGroup>

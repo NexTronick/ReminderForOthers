@@ -5,6 +5,7 @@ using ReminderForOthers.Model;
 using Microsoft.Maui.LifecycleEvents;
 using FirebaseAdmin;
 using Microsoft.Maui.Controls.PlatformConfiguration;
+using Plugin.Maui.Audio;
 
 namespace ReminderForOthers;
 
@@ -22,6 +23,8 @@ public static class MauiProgram
 			});
 
 		//adding all the services we are using
+		builder.Services.AddSingleton(AudioManager.Current);
+
 		builder.Services.AddTransient<MainPage>();
 		builder.Services.AddTransient<MainViewModel>();
 		builder.Services.AddTransient<PermissionsModel>();

@@ -1,5 +1,6 @@
 ﻿using Plugin.LocalNotification;
 using ReminderForOthers.Model;
+using ReminderForOthers.Services;
 using ReminderForOthers.ViewModel;
 using System.Linq;
 
@@ -10,6 +11,7 @@ namespace ReminderForOthers.Platforms.Android.Services
         private static RecordModel recordModel = new RecordModel();
         private static LoginModel loginModel = new LoginModel();
         private static ReminderModel reminderModel = new ReminderModel();
+        private static AudioPlayerService audioService = new AudioPlayerService();
 
         private IDictionary<string,Reminder> reminders = new Dictionary<string, Reminder>();
         private IDictionary<string, Reminder> reminded = new Dictionary<string, Reminder>();
@@ -41,6 +43,7 @@ namespace ReminderForOthers.Platforms.Android.Services
         private void UpdateReminders()
         {
             System.Diagnostics.Debug.WriteLine("UpdateReminders started");
+           
             Task<IDictionary<string, Reminder>> tempReminders = reminderModel.GetReceivedRemindersAsync(loginModel.GetLogInCacheAsync().Result);
             if (reminders.Count == tempReminders.Result.Count) { return; }
             reminders = tempReminders.Result;
@@ -68,8 +71,6 @@ namespace ReminderForOthers.Platforms.Android.Services
                 }
             });
         }
-
-
 
         private async void SetNotificationsAsync(int i,string documentID,Reminder reminder)
         {
@@ -120,7 +121,8 @@ namespace ReminderForOthers.Platforms.Android.Services
                         System.Diagnostics.Debug.WriteLine("Playing Audio");
                         
                     });
-                    Thread.Sleep(1000 * tenSeconds + ReminderAudio.AudioDuration(filePath.Result));
+                   
+                    Thread.Sleep(1000 * tenSeconds + audioService.AudioDuration(filePath.Result));
                     //remove from database
                     Task<bool> removed = reminderModel.RemoveReminderFirestore(item.Key);
 

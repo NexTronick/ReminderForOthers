@@ -1,12 +1,6 @@
-﻿
-
-using Plugin.AudioRecorder;
+﻿using Plugin.AudioRecorder;
 using Plugin.SimpleAudioRecorder;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ReminderForOthers.Services;
 
 namespace ReminderForOthers.Model
 {
@@ -20,11 +14,13 @@ namespace ReminderForOthers.Model
 
         //auido playing
         private AudioPlayer player;
+        private AudioPlayerService audioService;
 
         public RecordModel()
         {
             audioRecorder = CrossSimpleAudioRecorder.CreateSimpleAudioRecorder();
             player = new AudioPlayer();
+            audioService = new AudioPlayerService();
             isRecording = false;
             hasRecordedAudio=false;
         }
@@ -33,6 +29,7 @@ namespace ReminderForOthers.Model
         {
             if (isRecording) { return false; }
             isRecording = true;
+            audioService.PlayStartRecordAudio();
             await audioRecorder.RecordAsync();
             return true;
         }
@@ -43,6 +40,7 @@ namespace ReminderForOthers.Model
             isRecording = false;
             hasRecordedAudio = true;
             recordedAudio = await audioRecorder.StopAsync();
+            audioService.PlayStopRecordAudio();
             return true;
         }
 
@@ -51,6 +49,7 @@ namespace ReminderForOthers.Model
             //doesnt play audio
             if (!hasRecordedAudio) { return false; }
 
+            audioService.PlayStartRecordAudio();
             player.Play(recordedAudio.GetFilePath());
 
             return true; //playing
@@ -61,6 +60,7 @@ namespace ReminderForOthers.Model
             //doesnt play audio
             if (!hasRecordedAudio) { return false; }
             player.Pause();
+            audioService.PlayStopRecordAudio();
             return true;
         }
 
@@ -95,16 +95,18 @@ namespace ReminderForOthers.Model
             }
         }
 
+
         //to play downloaded audio
         public bool PlayDownloadedAudio(string filePath) 
         {
             if (!File.Exists(filePath)) { return false; }
+            audioService.PlayStartRecordAudio();
             player.Play(filePath);
+            Thread.Sleep(audioService.AudioDuration(filePath));
+            audioService.PlayStopRecordAudio();
             return true;
         }
 
-        
 
-       
     }
 }
