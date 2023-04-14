@@ -36,9 +36,12 @@ namespace ReminderForOthers.ViewModel
             SetCurrentUser();
         }
 
-        private async void SetCurrentUser()
+        [RelayCommand]
+        public async void SetCurrentUser()
         {
-            currentUser = await loginModel.GetLogInCacheAsync();
+            CurrentUser = await loginModel.GetLogInCacheAsync();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentUser)));
+            Console.WriteLine("Current User: "+ CurrentUser);
         }
 
 
@@ -76,18 +79,18 @@ namespace ReminderForOthers.ViewModel
         public async Task LogoutUserAsync()
         {
             loginModel.Logout();
-            await GotoLoginPageAsync();
+            await Shell.Current.GoToAsync("//Login");
         }
 
-        public async Task GotoLoginPageAsync()
-        {
-            //move to login page
-            if (string.IsNullOrEmpty(currentUser))
-            {
-                await Shell.Current.GoToAsync("//Login");
-            }
-            //await Shell.Current.GoToAsync(nameof(Login));
-        }
+        //public async Task GotoLoginPageAsync()
+        //{
+        //    //move to login page
+        //    if (string.IsNullOrEmpty(currentUser))
+        //    {
+        //        await Shell.Current.GoToAsync("//Login");
+        //    }
+        //    //await Shell.Current.GoToAsync(nameof(Login));
+        //}
 
         
     }

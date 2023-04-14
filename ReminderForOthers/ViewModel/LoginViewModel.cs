@@ -48,7 +48,8 @@ public partial class LoginViewModel : ObservableObject, INotifyPropertyChanged
         if (loginValid == 1)
         {
             //store to cache for logged In status true, username of the user. in a new method
-            await Shell.Current.GoToAsync("//Home");
+            await Shell.Current.GoToAsync("//Home//" + nameof(PersonalReminders));
+            await Shell.Current.DisplayAlert("Welcome "+username, "Please make sure to turn on background notificaiton in the settings to be able to play reminders in background.", "Okay");
         }
         else
         {

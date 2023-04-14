@@ -4,6 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Plugin.Maui.Audio;
+using System.Diagnostics;
+#if ANDROID
+using Activity = Android.App.Activity;
+#endif
+
+
 
 namespace ReminderForOthers.Services
 {
@@ -17,8 +23,12 @@ namespace ReminderForOthers.Services
 
         private static string[] audioClips = { "notification.wav", "start-record-audio.wav", "stop-record-audio.wav" };
 
+#if ANDROID
+        private static Android.Media.AudioManager androidAudioManager = (Android.Media.AudioManager) MainActivity.ActivityCurrent.GetSystemService(Activity.AudioService);
 
-        public AudioPlayerService() 
+#endif
+
+        public AudioPlayerService()
         {
             audioManager = AudioManager.Current;
             players = new IAudioPlayer[3];
@@ -28,7 +38,7 @@ namespace ReminderForOthers.Services
         {
             if (players[1] != null) { return false; }
             AudioStart(1);
-            
+
             return true;
         }
 
@@ -47,7 +57,7 @@ namespace ReminderForOthers.Services
         }
 
         //helper method that starts plays the audio and stops after time duration
-        private void AudioStart(int index) 
+        private void AudioStart(int index)
         {
             try
             {
@@ -62,12 +72,12 @@ namespace ReminderForOthers.Services
             catch (Exception ex)
             {
 
-                Console.WriteLine("Error: "+ex.Message);
+                Console.WriteLine("Error: " + ex.Message);
             }
-            
+
         }
 
-        public int AudioDuration(string filePath) 
+        public int AudioDuration(string filePath)
         {
             try
             {
@@ -82,6 +92,18 @@ namespace ReminderForOthers.Services
                 Console.WriteLine("AudioDuration Error: " + ex.Message);
             }
             return 0;
+        }
+
+        public void EnableBackgroundAudio()
+        {
+
+//#if ANDROID
+//            //enable the background audio 
+//            Android.Media.Session.MediaSessionManager manager;
+//            manager
+//            Android.Media.Session.PlaybackStateCode.Playing;
+            
+//#endif
         }
     }
 }

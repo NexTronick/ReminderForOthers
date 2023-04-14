@@ -119,6 +119,7 @@ namespace ReminderForOthers.Model
             {
                 for (int j = reminders.Length - 1; j > i; j--)
                 {
+                    Console.WriteLine("Reminder: " + reminders[i].PlayDateTime);
                     //Console.WriteLine($"Before switch, Reminder i:{reminders[i].Id}, Reminder j: {reminders[j].Id}");
                     if (reminders[i].PlayDateTime >= reminders[j].PlayDateTime)
                     {
@@ -148,6 +149,8 @@ namespace ReminderForOthers.Model
 
             for (int i = 0; i < reminders.Length; i++)
             {
+                DateTime newDate = reminders[i].PlayDateTime;
+                reminders[i].PlayDateTime = newDate.ToLocalTime();
                 remindersDic.Add(documentIDs[i], reminders[i]);
             }
 
@@ -251,10 +254,13 @@ namespace ReminderForOthers.Model
 
         //remove from database
 
-        public async Task<bool> RemoveReminderFirestore(string documentID)
+        public async Task<bool> RemoveReminderFirestore(string documentID, Reminder reminder)
         {
             try
             {
+                var reference = CrossFirebaseStorage.Current.Instance.RootReference.Child(reminder.RecordPath);
+                await reference.DeleteAsync();
+
                 await CrossCloudFirestore.Current
                           .Instance
                           .Collection("reminder")

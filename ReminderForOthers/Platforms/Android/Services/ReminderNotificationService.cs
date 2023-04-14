@@ -124,7 +124,7 @@ namespace ReminderForOthers.Platforms.Android.Services
                    
                     Thread.Sleep(1000 * tenSeconds + audioService.AudioDuration(filePath.Result));
                     //remove from database
-                    Task<bool> removed = reminderModel.RemoveReminderFirestore(item.Key);
+                    Task<bool> removed = reminderModel.RemoveReminderFirestore(item.Key, reTemp);
 
                     //update the current reminders
                     UpdateReminders();

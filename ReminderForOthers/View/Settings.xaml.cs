@@ -9,5 +9,10 @@ public partial class Settings : ContentPage
 		InitializeComponent();
 		BindingContext = new SettingsViewModel();
     }
+	protected override void OnAppearing()
+	{
+		base.OnAppearing();
+		((SettingsViewModel)BindingContext).SetCurrentUserCommand.Execute(this);
 
+    }
 }

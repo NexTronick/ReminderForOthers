@@ -13,7 +13,10 @@ public partial class Login : ContentPage
     private void TapGestureRecognizer_SignUp(object sender, EventArgs e)
 	{
         ((LoginViewModel)BindingContext).SignUpNowCommand.Execute(this);
-
-
+    }
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        BindingContext = new LoginViewModel();
     }
 }
