@@ -129,7 +129,10 @@
                 Grid.Row="2"
                 Grid.Column="1"
                 Grid.ColumnSpan="2">
-                <Entry Text="{Binding Title}" />
+                <Entry
+                    BackgroundColor="Transparent"
+                    Placeholder="Eat Medicine"
+                    Text="{Binding Title}" />
             </Border>
             <Label
                 Grid.Row="3"
@@ -139,6 +142,7 @@
                 VerticalTextAlignment="Center" />
             <Border Grid.Row="3" Grid.Column="1">
                 <DatePicker
+                    BackgroundColor="Transparent"
                     Date="{Binding SelectedDate.Date}"
                     MaximumDate="{Binding SelectedDate.MaximumDate}"
                     MinimumDate="{Binding SelectedDate.MinimumDate}" />

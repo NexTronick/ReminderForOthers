@@ -49,74 +49,46 @@
                             <Border>
                                 <StackLayout>
                                     <Grid
+                                        Margin="10"
                                         Padding="20,10,20,0"
-                                        ColumnDefinitions="auto"
-                                        RowDefinitions="auto,auto,auto,auto,auto">
-                                        <Grid
-                                            Grid.Row="0"
-                                            ColumnDefinitions="auto,auto"
-                                            ColumnSpacing="120">
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Text="Id: " />
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Text="{Binding Id}" />
-                                        </Grid>
+                                        ColumnDefinitions="auto,auto"
+                                        HorizontalOptions="Center"
+                                        RowDefinitions="auto,auto,auto,auto,auto"
+                                        VerticalOptions="Center">
 
-                                        <Grid
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="Title: " />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding Title}" />
+                                        <Label
                                             Grid.Row="1"
-                                            ColumnDefinitions="auto,auto"
-                                            ColumnSpacing="105">
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Text="Title: " />
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Text="{Binding Title}" />
-                                        </Grid>
-                                        <Grid
+                                            Grid.Column="0"
+                                            Text="Play Date and Time: " />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Text="{Binding PlayDateTime}" />
+                                        <Label
                                             Grid.Row="2"
-                                            ColumnDefinitions="auto,auto"
-                                            ColumnSpacing="20">
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Text="Reminder DateTime: " />
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Text="{Binding PlayDateTime}" />
-                                        </Grid>
-                                        <Grid
+                                            Grid.Column="0"
+                                            Text="Sent To: " />
+                                        <Label
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            Text="{Binding UsernameTo}" />
+                                        <Button
                                             Grid.Row="3"
-                                            ColumnDefinitions="auto,auto"
-                                            ColumnSpacing="40">
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Text="Received from: " />
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Text="{Binding UsernameFrom}" />
-                                        </Grid>
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            Margin="0,10,0,0"
+                                            Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:PersonalReminderViewModel}}, Path=PlayReminderAsyncCommand}"
+                                            CommandParameter="{Binding RecordPath}"
+                                            Text="Listen" />
                                     </Grid>
-                                    <Label Margin="20,0,0,0" Text="File path: " />
-                                    <Label
-                                        Margin="20,0,0,0"
-                                        HeightRequest="30"
-                                        LineBreakMode="CharacterWrap"
-                                        MaxLines="5"
-                                        Text="{Binding RecordPath}" />
-                                    <Button
-                                        Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:PersonalReminderViewModel}}, Path=PlayReminderAsyncCommand}"
-                                        CommandParameter="{Binding RecordPath}"
-                                        Text="Play Reminder" />
                                 </StackLayout>
                             </Border>
                         </DataTemplate>
@@ -142,74 +114,48 @@
                             <Border>
                                 <StackLayout>
                                     <Grid
+                                        Margin="10"
                                         Padding="20,10,20,0"
-                                        ColumnDefinitions="auto"
-                                        RowDefinitions="auto,auto,auto,auto,auto">
-                                        <Grid
-                                            Grid.Row="0"
-                                            ColumnDefinitions="auto,auto"
-                                            ColumnSpacing="120">
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Text="Id: " />
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Text="{Binding Id}" />
-                                        </Grid>
+                                        ColumnDefinitions="auto,auto"
+                                        HorizontalOptions="Center"
+                                        RowDefinitions="auto,auto,auto,auto,auto"
+                                        VerticalOptions="Center">
 
-                                        <Grid
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="0"
+                                            Text="Title: " />
+                                        <Label
+                                            Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="{Binding Title}" />
+                                        <Label
                                             Grid.Row="1"
-                                            ColumnDefinitions="auto,auto"
-                                            ColumnSpacing="105">
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Text="Title: " />
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Text="{Binding Title}" />
-                                        </Grid>
-                                        <Grid
+                                            Grid.Column="0"
+                                            Text="Play Date and Time: " />
+                                        <Label
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Text="{Binding PlayDateTime}" />
+                                        <Label
                                             Grid.Row="2"
-                                            ColumnDefinitions="auto,auto"
-                                            ColumnSpacing="20">
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Text="Reminder DateTime: " />
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Text="{Binding PlayDateTime}" />
-                                        </Grid>
-                                        <Grid
+                                            Grid.Column="0"
+                                            Text="Sent To: " />
+                                        <Label
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            Text="{Binding UsernameTo}" />
+                                        <Button
                                             Grid.Row="3"
-                                            ColumnDefinitions="auto,auto"
-                                            ColumnSpacing="40">
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="0"
-                                                Text="Sent To: " />
-                                            <Label
-                                                Grid.Row="0"
-                                                Grid.Column="1"
-                                                Text="{Binding UsernameTo}" />
-                                        </Grid>
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            Margin="0,10,0,0"
+                                            Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:PersonalReminderViewModel}}, Path=PlayReminderAsyncCommand}"
+                                            CommandParameter="{Binding RecordPath}"
+                                            Text="{Binding Title, StringFormat='Listen to {0}'}" />
                                     </Grid>
-                                    <Label Margin="20,0,0,0" Text="File path: " />
-                                    <Label
-                                        Margin="20,0,0,0"
-                                        HeightRequest="30"
-                                        LineBreakMode="CharacterWrap"
-                                        MaxLines="5"
-                                        Text="{Binding RecordPath}" />
-                                    <Button
-                                        Command="{Binding Source={x:RelativeSource AncestorType={x:Type viewmodel:PersonalReminderViewModel}}, Path=PlayReminderAsyncCommand}"
-                                        CommandParameter="{Binding RecordPath}"
-                                        Text="Play Reminder" />
+
+
                                 </StackLayout>
                             </Border>
                         </DataTemplate>

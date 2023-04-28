@@ -6,79 +6,169 @@
     xmlns:models="clr-namespace:ReminderForOthers.Model"
     xmlns:viewmodel="clr-namespace:ReminderForOthers.ViewModel"
     x:DataType="viewmodel:SettingsViewModel">
-    <StackLayout>
-        <Grid
-            Margin="0,30,0,10"
-            BackgroundColor="Transparent"
-            ColumnDefinitions="0.25*,*,0.25*"
-            RowDefinitions="auto">
+    <ScrollView>
+        <StackLayout>
+            <Grid
+                Margin="0,30,0,10"
+                BackgroundColor="Transparent"
+                ColumnDefinitions="0.25*,*,0.25*"
+                RowDefinitions="auto">
+
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    FontAttributes="Bold"
+                    FontSize="25"
+                    HorizontalTextAlignment="Center"
+                    Text="Settings"
+                    TextColor="#2b579a" />
+
+            </Grid>
+            <Border Margin="30,40,30,0" BackgroundColor="#efefef">
+                <HorizontalStackLayout>
+                    <Image
+                        Margin="15,0,0,0"
+                        HeightRequest="20"
+                        Source="icons/search.svg"
+                        WidthRequest="20" />
+                    <Entry
+                        BackgroundColor="Transparent"
+                        Placeholder="Search for a setting..."
+                        PlaceholderColor="#999999" />
+                </HorizontalStackLayout>
+            </Border>
+
+            <Grid
+                Margin="30,10,25,10"
+                ColumnDefinitions="0.5*,0.5*"
+                RowDefinitions="auto">
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalOptions="Start"
+                    Text="{Binding CurrentUser, StringFormat='Welcome: {0}'}"
+                    TextColor="Black" />
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    FontAttributes="Italic"
+                    FontSize="18"
+                    HorizontalOptions="End"
+                    Text="Logout"
+                    TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutUserCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </Grid>
 
             <Label
+                Margin="25,20,0,0"
+                HorizontalTextAlignment="Start"
+                Text="Notification Settings " />
+            <Grid
+                Margin="0,20,0,0"
+                ColumnDefinitions="0.7*,0.3*"
+                RowDefinitions="auto">
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalTextAlignment="Center"
+                    Text="Toggle Background Notification: "
+                    VerticalTextAlignment="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding CheckForegroundCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+                <CheckBox
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HorizontalOptions="Center"
+                    IsChecked="{Binding ForegroundChecked}" />
+            </Grid>
+            <Label
+                Margin="25,20,0,0"
+                HorizontalTextAlignment="Start"
+                Text="Account Settings " />
+            <Grid
+                Padding="20,10,20,0"
+                ColumnDefinitions="0.4*,0.6*"
+                RowDefinitions="auto,auto,auto,auto,auto,auto">
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalTextAlignment="Center"
+                    Text="Username: "
+                    VerticalTextAlignment="Center" />
+
+                <Entry
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding User.Username, StringFormat='{0}'}"
+                    VerticalTextAlignment="Center" />
+
+
+                <!--<Label
                 Grid.Row="0"
                 Grid.Column="1"
-                FontAttributes="Bold"
-                FontSize="25"
                 HorizontalTextAlignment="Center"
-                Text="Settings"
-                TextColor="#2b579a" />
+                Text="{Binding User.Username, StringFormat='{0}'}"
+                VerticalTextAlignment="Center" />-->
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    HorizontalTextAlignment="Center"
+                    Text="First Name: "
+                    VerticalTextAlignment="Center" />
+                <Entry
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding User.FirstName, StringFormat='{0}'}"
+                    VerticalTextAlignment="Center" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    HorizontalTextAlignment="Center"
+                    Text="Last Name: "
+                    VerticalTextAlignment="Center" />
+                <Entry
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding User.LastName, StringFormat='{0}'}"
+                    VerticalTextAlignment="Center" />
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    HorizontalTextAlignment="Center"
+                    Text="Email: "
+                    VerticalTextAlignment="Center" />
+                <Entry
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    HorizontalTextAlignment="Center"
+                    Text="{Binding User.Email, StringFormat='{0}'}"
+                    VerticalTextAlignment="Center" />
+                <Label
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    HorizontalTextAlignment="Center"
+                    Text="BirthDate: "
+                    VerticalTextAlignment="Center" />
+                <DatePicker
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Date="{Binding User.BirthDate}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center" />
 
-        </Grid>
-        <Border Margin="30,40,30,0" BackgroundColor="#efefef">
-            <HorizontalStackLayout>
-                <Image
-                    Margin="15,0,0,0"
-                    HeightRequest="20"
-                    Source="icons/search.svg"
-                    WidthRequest="20" />
-                <Entry Placeholder="Search for a setting..." PlaceholderColor="#999999" />
-            </HorizontalStackLayout>
-        </Border>
-
-        <Grid
-            Margin="30,10,25,10"
-            ColumnDefinitions="0.5*,0.5*"
-            RowDefinitions="auto">
-            <Label
-                Grid.Row="0"
-                Grid.Column="0"
-                HorizontalOptions="Start"
-                Text="{Binding CurrentUser, StringFormat='Welcome: {0}'}"
-                TextColor="Black" />
-            <Label
-                Grid.Row="0"
-                Grid.Column="1"
-                FontAttributes="Italic"
-                FontSize="18"
-                HorizontalOptions="End"
-                Text="Logout"
-                TextDecorations="Underline">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding LogoutUserCommand}" />
-                </Label.GestureRecognizers>
-            </Label>
-        </Grid>
-
-
-        <Grid
-            Margin="0,20,0,0"
-            ColumnDefinitions="0.7*,0.3*"
-            RowDefinitions="auto">
-            <Label
-                Grid.Row="0"
-                Grid.Column="0"
-                HorizontalTextAlignment="Center"
-                Text="Toggle Background Notification: "
-                VerticalTextAlignment="Center">
-                <Label.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding CheckForegroundCommand}" />
-                </Label.GestureRecognizers>
-            </Label>
-            <CheckBox
-                Grid.Row="0"
-                Grid.Column="1"
-                HorizontalOptions="Center"
-                IsChecked="{Binding ForegroundChecked}" />
-        </Grid>
-
-    </StackLayout>
+            </Grid>
+            <Button
+                Margin="20"
+                Command="{Binding SaveSettingChangesCommand}"
+                Text="Save Settings" />
+        </StackLayout>
+    </ScrollView>
 </ContentPage>

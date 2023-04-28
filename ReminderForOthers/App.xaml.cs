@@ -1,4 +1,6 @@
-﻿using ReminderForOthers.View;
+﻿using ReminderForOthers.Model;
+using ReminderForOthers.Services;
+using ReminderForOthers.View;
 namespace ReminderForOthers;
 
 public partial class App : Application
@@ -8,6 +10,7 @@ public partial class App : Application
 		InitializeComponent();
 		MainPage = new AppShell();
         CheckUserLoggedIn();
+        LoadSettingsServices();
     }
     private async void CheckUserLoggedIn()
     {
@@ -22,5 +25,10 @@ public partial class App : Application
         else {
             await Shell.Current.GoToAsync("//Home");
         }
+    }
+    private async void LoadSettingsServices() 
+    {
+        SettingsModel settingsModel = new SettingsModel();
+        await settingsModel.LoadSettings();
     }
 }

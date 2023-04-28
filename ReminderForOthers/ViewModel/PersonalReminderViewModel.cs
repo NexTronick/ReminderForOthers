@@ -6,6 +6,8 @@ using ReminderForOthers.Model;
 using Microsoft.Maui.Controls;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using Plugin.LocalNotification.AndroidOption;
+using Plugin.LocalNotification;
 
 namespace ReminderForOthers.ViewModel
 {
@@ -51,7 +53,7 @@ namespace ReminderForOthers.ViewModel
             return reminderModel.ConvertToListReminder(reminderReceiveDic);
         }
 
-
+        
         //refresh view
         [RelayCommand]
         async Task RefreshReceivedReminders()

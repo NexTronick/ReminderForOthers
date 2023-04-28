@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using ReminderForOthers.Model;
 //using ReminderForOthers.Platforms.Android.Services;
 using ReminderForOthers.Services;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace ReminderForOthers.ViewModel
@@ -13,6 +14,10 @@ namespace ReminderForOthers.ViewModel
 
         [ObservableProperty]
         string currentUser;
+
+        public User User { get; set; }
+        private string userKey;
+        private User initialUser;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,10 +35,21 @@ namespace ReminderForOthers.ViewModel
         }
 
         private LoginModel loginModel;
+        private SignUpModel signUpModel;
+        private SettingsModel settingsModel;
         public SettingsViewModel()
         {
             loginModel = new LoginModel();
+            signUpModel = new SignUpModel();
+            settingsModel = new SettingsModel();
             SetCurrentUser();
+            SetInitialSettings();
+        }
+
+        public async void SetInitialSettings()
+        {
+            SettingsService settingsService = await settingsModel.ReadSettings();
+            ForegroundChecked = settingsService.ForegroundServiceOn;
         }
 
         [RelayCommand]
@@ -41,39 +57,65 @@ namespace ReminderForOthers.ViewModel
         {
             CurrentUser = await loginModel.GetLogInCacheAsync();
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CurrentUser)));
-            Console.WriteLine("Current User: "+ CurrentUser);
+
+            User = await signUpModel.GetUserFromUsernameAsync(CurrentUser);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(User)));
+            initialUser = await signUpModel.GetUserFromUsernameAsync(CurrentUser);
+            userKey = await signUpModel.GetUserKeyAsync(User);
+            //Console.WriteLine("Current User: "+ CurrentUser);
         }
 
+        [RelayCommand]
+        public async void SaveSettingChanges()
+        {
+            SaveSettingChanges();
+            if (!await DidUserDetailsChange()) { return; }
+            await signUpModel.UpdateUserInfoAsync(userKey, User);
+        }
 
+        private async void SaveSettingService() 
+        {
+            SettingsService settingsService = await settingsModel.ReadSettings();
+            if (settingsService.ForegroundServiceOn != _foregroundChecked)
+            {
+                settingsService.ForegroundServiceOn = _foregroundChecked;
+                await settingsModel.WriteSettings(settingsService);
+            }
+        }
+
+        private async Task<bool> DidUserDetailsChange()
+        {
+            Console.WriteLine("Userdetails before: " + User.Username + " , " + User.Email + " , " + User.FirstName + " , " + User.LastName + " , " + User.BirthDate + " , ");
+            if (initialUser.Username != User.Username ||
+                initialUser.Email != User.Email ||
+                initialUser.FirstName != User.FirstName ||
+                initialUser.LastName != User.LastName ||
+                initialUser.BirthDate != User.BirthDate)
+            {
+                return true;
+            }
+            Console.WriteLine("Userdetails: " + User.Username + " , " + User.Email + " , " + User.FirstName + " , " + User.LastName + " , " + User.BirthDate + " , ");
+            return false;
+        }
 
         [RelayCommand]
         void CheckForeground()
         {
             ToggleBackgroundNotification(!_foregroundChecked);
+            SaveSettingService();
         }
         private void ToggleBackgroundNotification(bool check)
         {
             _foregroundChecked = check;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ForegroundChecked)));
 
-            //toggle services
-            ToggleForegroundService(check);
-        }
-        //to turn the service on and off
-        private void ToggleForegroundService(bool check)
-        {
-            if (check && !DependencyService.Resolve<IForegroundService>().IsForegroundServiceRunning())
-            {
-                DependencyService.Resolve<IForegroundService>().Start();
-                Shell.Current.DisplayAlert("Foreground Service Started", "The background service is running.", "Okay");
-            }
-            else if(!check && DependencyService.Resolve<IForegroundService>().IsForegroundServiceRunning())
-            {
-                DependencyService.Resolve<IForegroundService>().Stop();
-                Shell.Current.DisplayAlert("Foreground Service Stopped", "The background service has stopped.", "Okay");
-            }
+            //save services
+            SaveSettingService();
 
+            //Start Service
+            settingsModel.SetForegroundService(check);//to turn the service on and off
         }
+        
 
         [RelayCommand]
         public async Task LogoutUserAsync()
@@ -92,6 +134,6 @@ namespace ReminderForOthers.ViewModel
         //    //await Shell.Current.GoToAsync(nameof(Login));
         //}
 
-        
+
     }
 }

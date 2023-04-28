@@ -6,7 +6,13 @@ using Microsoft.Maui.LifecycleEvents;
 using FirebaseAdmin;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Plugin.Maui.Audio;
-
+using Plugin.LocalNotification;
+//using Plugin.Firebase.Auth;
+//#if IOS
+//using Plugin.Firebase.Core.Platforms.iOS;
+//#elif ANDROID
+//using Plugin.Firebase.Core.Platforms.Android;
+//#endif
 namespace ReminderForOthers;
 
 public static class MauiProgram
@@ -15,8 +21,9 @@ public static class MauiProgram
 	{
 		var builder = MauiApp.CreateBuilder();
 		builder
-			.UseMauiApp<App>() 
-			.ConfigureFonts(fonts =>
+			.UseMauiApp<App>()
+			
+            .ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
@@ -56,4 +63,21 @@ public static class MauiProgram
 
         return builder.Build();
 	}
+//    private static MauiAppBuilder RegisterFirebaseServices(this MauiAppBuilder builder)
+//    {
+//        builder.ConfigureLifecycleEvents(events => {
+//#if IOS
+//            events.AddiOS(iOS => iOS.FinishedLaunching((_,__) => {
+//                CrossFirebase.Initialize();
+//                return false;
+//            }));
+//#elif ANDROID
+//            events.AddAndroid(android => android.OnCreate((activity, _) =>
+//                CrossFirebase.Initialize(activity)));
+//#endif
+//        });
+
+//        builder.Services.AddSingleton(_ => CrossFirebaseAuth.Current);
+//        return builder;
+//    }
 }

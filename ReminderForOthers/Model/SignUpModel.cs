@@ -40,12 +40,13 @@ namespace ReminderForOthers.Model
 
         //cloud directory firebase
         private const string Database_URL = "https://reminderforothers-default-rtdb.asia-southeast1.firebasedatabase.app";
-
+        private FirebaseClient client ;
         //constructors
         public SignUpModel()
         {
             mainDir = Path.Combine(FileSystem.Current.AppDataDirectory, FILENAME);
             usersLocal = new Dictionary<string, User>();
+            client = new FirebaseClient(Database_URL);
         }
 
         public SignUpModel(string lName, string fName, string birthDate, string username, MailAddress email, string password)
@@ -62,6 +63,7 @@ namespace ReminderForOthers.Model
 
             mainDir = Path.Combine(FileSystem.Current.AppDataDirectory, FILENAME);
             usersLocal = new Dictionary<string, User>();
+            client = new FirebaseClient(Database_URL);
         }
 
         public string ConvertToSHA256(string s)
@@ -134,7 +136,7 @@ namespace ReminderForOthers.Model
         {
             try
             {
-                FirebaseClient client = new FirebaseClient(Database_URL);
+                
 
                 var users = await client.Child("Users").OnceAsync<User>();
 
@@ -160,6 +162,51 @@ namespace ReminderForOthers.Model
 
             IDictionary<string, User> userDict = await GetUsers();
             return userDict.ContainsKey(username); //false (doesnt exists)
+        }
+
+        public async Task<User> GetUserFromUsernameAsync(string username) 
+        {
+            IDictionary<string, User> userDict = await GetUsers();
+            return userDict.TryGetValue(username, out User user) ? user : null;
+        }
+
+        //get users with key
+        public async Task<string> GetUserKeyAsync(User currentUser) 
+        {
+            try
+            {
+                var users = await client.Child("Users").OnceAsync<User>();
+                foreach (var item in users)
+                {
+                    User temp = item.Object;
+                    if (temp.Username ==  currentUser.Username) 
+                    {
+                        Console.WriteLine("Item key: "+item.Key);
+                        return item.Key;
+                    }
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return "";
+        }
+
+        public async Task<bool> UpdateUserInfoAsync(string key, User user) 
+        {
+            try
+            {
+                await client.Child("Users").Child(key).PutAsync(user);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
+            
         }
 
         //returns [-1 username doesnt exits, 0 password wrong, 1 password correct ] 
