@@ -41,7 +41,7 @@ public partial class App : Application
         Window = window;
         window.Stopped += (s, e) =>
         {
-            System.Diagnostics.Debug.WriteLine("=========Stopped");
+            //System.Diagnostics.Debug.WriteLine("=========Stopped");
             SettingsChangedWithStop(true);
         };
         

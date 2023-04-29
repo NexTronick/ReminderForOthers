@@ -14,6 +14,12 @@ namespace ReminderForOthers.ViewModel
         [ObservableProperty]
         string currentUser;
 
+        [ObservableProperty]
+        string password;
+
+        [ObservableProperty]
+        string confirmPassword;
+
         public User User { get; set; }
         private string userKey;
         private User initialUser;
@@ -41,10 +47,20 @@ namespace ReminderForOthers.ViewModel
             loginModel = new LoginModel();
             signUpModel = new SignUpModel();
             settingsModel = new SettingsModel();
+            SetInitialValues();
             SetCurrentUser();
             SetInitialSettings();
         }
 
+        [RelayCommand]
+        void SetInitialValues()
+        {
+            Password = "";
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Password)));
+            ConfirmPassword = "";
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfirmPassword)));
+
+        }
         public async void SetInitialSettings()
         {
             SettingsService settingsService = await settingsModel.ReadSettings();
@@ -67,11 +83,19 @@ namespace ReminderForOthers.ViewModel
         [RelayCommand]
         public async void SaveSettingChanges()
         {
-
             SaveSettingService();
             if (!await AreDetailsChangedValid()) { return; }
             bool isNewUsername = User.Username != initialUser.Username;
-            bool success = await signUpModel.UpdateUserInfoAsync(userKey, User, isNewUsername);
+            User updatedUser = User;
+            
+            //add new password
+            if (!string.IsNullOrEmpty(Password) && password == confirmPassword)
+            {
+                updatedUser.Password = signUpModel.ConvertToSHA256(Password);
+            }
+
+            bool isNewPassword = updatedUser.Password != initialUser.Password;
+            bool success = await signUpModel.UpdateUserInfoAsync(userKey, updatedUser, isNewUsername);
 
             //failed
             if (!success)
@@ -83,13 +107,19 @@ namespace ReminderForOthers.ViewModel
             //success
 
             //different username
-            if (User.Username != initialUser.Username)
+            if (isNewUsername)
             {
                 await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!\nFrom Username '" + initialUser.Username + "' to '" + User.Username + "'\nDirecting back to Login.", "Okay");
                 await LogoutUserAsync();
                 return;
             }
-
+            //login if password is changed
+            if (isNewPassword)
+            {
+                await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!\nPassword was updated!\nDirecting back to Login.", "Okay");
+                await LogoutUserAsync();
+                return;
+            }
             //update the new user info
             SetCurrentUser();
             await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!", "Okay");
@@ -112,10 +142,11 @@ namespace ReminderForOthers.ViewModel
                 initialUser.Email != User.Email ||
                 initialUser.FirstName != User.FirstName ||
                 initialUser.LastName != User.LastName ||
-                initialUser.BirthDate != User.BirthDate)
+                initialUser.BirthDate != User.BirthDate ||
+                !string.IsNullOrEmpty(Password) || !string.IsNullOrEmpty(confirmPassword))
             {
                 SignUpViewModel signUpViewModel = new SignUpViewModel();
-                return signUpViewModel.ValidateUsersDetails(User); //validate
+                return signUpViewModel.ValidateUsersDetails(User, password, confirmPassword); //validate
             }
 
             //if no details changed

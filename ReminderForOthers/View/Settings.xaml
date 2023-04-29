@@ -163,6 +163,52 @@
                     Date="{Binding User.BirthDate}"
                     HorizontalOptions="Center"
                     VerticalOptions="Center" />
+            </Grid>
+            <Label
+                Margin="25,20,0,0"
+                HorizontalTextAlignment="Start"
+                Text="Change Password Settings " />
+            <Grid
+                Padding="20,10,20,0"
+                ColumnDefinitions="0.4*,0.6*"
+                RowDefinitions="auto,auto,auto">
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalTextAlignment="Center"
+                    Text="Password: "
+                    VerticalTextAlignment="Center" />
+
+                <Entry
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    HorizontalTextAlignment="Center"
+                    IsPassword="True"
+                    Text="{Binding Password, StringFormat='{0}'}"
+                    VerticalTextAlignment="Center" />
+
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    HorizontalTextAlignment="Center"
+                    Text="Confirm Password: "
+                    VerticalTextAlignment="Center" />
+                <Entry
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    HorizontalTextAlignment="Center"
+                    IsPassword="True"
+                    Text="{Binding ConfirmPassword, StringFormat='{0}'}"
+                    VerticalTextAlignment="Center" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="5"
+                    FontSize="12"
+                    LineBreakMode="CharacterWrap"
+                    Text="* 8-16 Characters, 1 Upper case, 1 Lower case, 1 Number, and 1 Special Character"
+                    TextColor="#2b579a"
+                    WidthRequest="190" />
 
             </Grid>
             <Button

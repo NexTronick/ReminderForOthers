@@ -179,7 +179,7 @@ public partial class SignUpViewModel : ObservableObject
 
         if (!IsUserValid()) { return false; }
         if (!IsEmailValid()) { return false; }
-        if (!IsPasswordValid()) { return false; }
+        if (!IsPasswordValid(password,rePassword)) { return false; }
         return true;
     }
 
@@ -223,7 +223,7 @@ public partial class SignUpViewModel : ObservableObject
         }
     }
 
-    bool IsPasswordValid()
+    bool IsPasswordValid(string password,string rePassword)
     {
         if (string.IsNullOrEmpty(password)
             || password.Length < 8
@@ -243,7 +243,7 @@ public partial class SignUpViewModel : ObservableObject
     }
 
     //method used by settings VM to validate
-    public bool ValidateUsersDetails(User user) 
+    public bool ValidateUsersDetails(User user,string password, string rePassword) 
     {
         firstName = user.FirstName;
         lastName = user.LastName;
@@ -253,6 +253,7 @@ public partial class SignUpViewModel : ObservableObject
         if (!ValidateFirstPage()) { return false; }
         if (!IsUserValid()) { return false; }
         if (!IsEmailValid()) { return false; }
+        if(!IsPasswordValid(password, rePassword)) { return false; }
         return true;
     }
 

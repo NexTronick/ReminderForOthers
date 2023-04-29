@@ -41,7 +41,7 @@ namespace ReminderForOthers.Platforms.Android.Services
                 Thread.Sleep(1000); //run after 1 second
                 try
                 {
-                    reminderNotificationService.RunReminderServices(1000 * 10, 1000);
+                    reminderNotificationService.RunReminderServices(1000 * 60, 1000);
                     reminderNotificationService.StartService();
                 }
                 catch (Exception ex)

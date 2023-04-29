@@ -13,6 +13,6 @@ public partial class Settings : ContentPage
 	{
 		base.OnAppearing();
 		((SettingsViewModel)BindingContext).SetCurrentUserCommand.Execute(this);
-
+		((SettingsViewModel)BindingContext).SetInitialValuesCommand.Execute(this);
     }
 }
