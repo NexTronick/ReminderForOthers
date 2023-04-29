@@ -1,5 +1,4 @@
-﻿
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ReminderForOthers.Model;
 //using ReminderForOthers.Platforms.Android.Services;
@@ -68,12 +67,35 @@ namespace ReminderForOthers.ViewModel
         [RelayCommand]
         public async void SaveSettingChanges()
         {
-            SaveSettingChanges();
-            if (!await DidUserDetailsChange()) { return; }
-            await signUpModel.UpdateUserInfoAsync(userKey, User);
+
+            SaveSettingService();
+            if (!await AreDetailsChangedValid()) { return; }
+            bool isNewUsername = User.Username != initialUser.Username;
+            bool success = await signUpModel.UpdateUserInfoAsync(userKey, User, isNewUsername);
+
+            //failed
+            if (!success)
+            {
+                await Shell.Current.DisplayAlert("Account Settings", "Account Settings Failed to update!\nEither Username or Email are already taken.", "Okay");
+                return;
+            }
+
+            //success
+
+            //different username
+            if (User.Username != initialUser.Username)
+            {
+                await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!\nFrom Username '" + initialUser.Username + "' to '" + User.Username + "'\nDirecting back to Login.", "Okay");
+                await LogoutUserAsync();
+                return;
+            }
+
+            //update the new user info
+            SetCurrentUser();
+            await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!", "Okay");
         }
 
-        private async void SaveSettingService() 
+        private async void SaveSettingService()
         {
             SettingsService settingsService = await settingsModel.ReadSettings();
             if (settingsService.ForegroundServiceOn != _foregroundChecked)
@@ -83,18 +105,20 @@ namespace ReminderForOthers.ViewModel
             }
         }
 
-        private async Task<bool> DidUserDetailsChange()
+        private async Task<bool> AreDetailsChangedValid()
         {
-            Console.WriteLine("Userdetails before: " + User.Username + " , " + User.Email + " , " + User.FirstName + " , " + User.LastName + " , " + User.BirthDate + " , ");
+            //details are changed
             if (initialUser.Username != User.Username ||
                 initialUser.Email != User.Email ||
                 initialUser.FirstName != User.FirstName ||
                 initialUser.LastName != User.LastName ||
                 initialUser.BirthDate != User.BirthDate)
             {
-                return true;
+                SignUpViewModel signUpViewModel = new SignUpViewModel();
+                return signUpViewModel.ValidateUsersDetails(User); //validate
             }
-            Console.WriteLine("Userdetails: " + User.Username + " , " + User.Email + " , " + User.FirstName + " , " + User.LastName + " , " + User.BirthDate + " , ");
+
+            //if no details changed
             return false;
         }
 
@@ -115,12 +139,14 @@ namespace ReminderForOthers.ViewModel
             //Start Service
             settingsModel.SetForegroundService(check);//to turn the service on and off
         }
-        
+
 
         [RelayCommand]
         public async Task LogoutUserAsync()
         {
             loginModel.Logout();
+            settingsModel.DeleteSettings();
+            SetInitialSettings();
             await Shell.Current.GoToAsync("//Login");
         }
 

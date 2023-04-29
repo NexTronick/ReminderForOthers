@@ -78,6 +78,7 @@
                 Margin="5"
                 VerticalOptions="Center">
                 <Entry
+                    BackgroundColor="Transparent"
                     Placeholder="Min 1 and Max 32 characters"
                     Text="{Binding FirstName}"
                     VerticalOptions="Center" />
@@ -94,6 +95,7 @@
                 Margin="5"
                 VerticalOptions="Center">
                 <Entry
+                    BackgroundColor="Transparent"
                     Placeholder="Min 1 and Max 32 characters"
                     Text="{Binding LastName}"
                     VerticalOptions="Center" />
@@ -110,6 +112,7 @@
                 Margin="5"
                 VerticalOptions="Center">
                 <DatePicker
+                    BackgroundColor="Transparent"
                     Date="{Binding BirthDate.Date}"
                     MaximumDate="{Binding BirthDate.MaximumDate}"
                     MinimumDate="{Binding BirthDate.MinimumDate}" />

@@ -57,7 +57,10 @@
                 Text="Username:"
                 VerticalTextAlignment="Center" />
             <Border Grid.Row="1" Grid.Column="1">
-                <Entry IsPassword="False" Text="{Binding Username}" />
+                <Entry
+                    BackgroundColor="Transparent"
+                    IsPassword="False"
+                    Text="{Binding Username}" />
             </Border>
             <Label
                 Grid.Row="2"
@@ -66,7 +69,10 @@
                 Text="Password:"
                 VerticalTextAlignment="Center" />
             <Border Grid.Row="2" Grid.Column="1">
-                <Entry IsPassword="True" Text="{Binding Password}" />
+                <Entry
+                    BackgroundColor="Transparent"
+                    IsPassword="True"
+                    Text="{Binding Password}" />
             </Border>
             <Grid
                 Grid.Row="3"

@@ -43,6 +43,15 @@ namespace ReminderForOthers.Model
             return "";
         }
 
+        public async Task<string> GetStartLoginInfoAsync() 
+        {
+            if (File.Exists(logPath))
+            {
+                return await File.ReadAllTextAsync(logPath);
+            }
+            return "";
+        }
+
         private async Task StoreLogInCacheAsync(string path, string username)
         {
             await File.WriteAllTextAsync(path, username);

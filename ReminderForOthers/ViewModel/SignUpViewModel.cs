@@ -6,6 +6,7 @@ using ReminderForOthers.View;
 using System.Diagnostics.Tracing;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
+using System.Runtime.CompilerServices;
 
 namespace ReminderForOthers.ViewModel;
 
@@ -241,6 +242,19 @@ public partial class SignUpViewModel : ObservableObject
         return true;
     }
 
+    //method used by settings VM to validate
+    public bool ValidateUsersDetails(User user) 
+    {
+        firstName = user.FirstName;
+        lastName = user.LastName;
+        birthDate.Date = DateTime.Parse(user.BirthDate);
+        email = user.Email;
+        username = user.Username;
+        if (!ValidateFirstPage()) { return false; }
+        if (!IsUserValid()) { return false; }
+        if (!IsEmailValid()) { return false; }
+        return true;
+    }
 
 
     //default navigations

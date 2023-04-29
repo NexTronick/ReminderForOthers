@@ -9,6 +9,7 @@ using Firebase.Database.Query;
 using System;
 using System.Text;
 using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 
 namespace ReminderForOthers.Model
 {
@@ -40,7 +41,7 @@ namespace ReminderForOthers.Model
 
         //cloud directory firebase
         private const string Database_URL = "https://reminderforothers-default-rtdb.asia-southeast1.firebasedatabase.app";
-        private FirebaseClient client ;
+        private FirebaseClient client;
         //constructors
         public SignUpModel()
         {
@@ -105,24 +106,16 @@ namespace ReminderForOthers.Model
                 //check if user exits
                 FirebaseClient client = new FirebaseClient(Database_URL);
                 IDictionary<string, User> usersList = await GetUsers();
-                int userExists = 1;
+
                 await Task.Delay(1000);
-                foreach (var item in usersList)
-                {
-                    User tempUser = item.Value;
-                    Console.WriteLine($"{tempUser.Username} : {user.Username}");
-                    if (tempUser.Username == user.Username) { userExists = 0; }
-                    else if (tempUser.Email == user.Email) { userExists = -1; }
-                }
+                int userDoesntExist = UserDoesNotExist(user, usersList);
 
-                
-
-                Console.WriteLine($"User Exists: {userExists}");
+                Console.WriteLine($"User Doesnt Exist: {userDoesntExist}");
                 //if user exists
-                if (userExists < 1) { return userExists; }
+                if (userDoesntExist < 1) { return userDoesntExist; }
                 //add user
                 await client.Child("Users").PostAsync<User>(user);
-                return userExists;
+                return userDoesntExist;
 
             }
             catch (Exception ex)
@@ -136,15 +129,13 @@ namespace ReminderForOthers.Model
         {
             try
             {
-                
-
                 var users = await client.Child("Users").OnceAsync<User>();
 
                 IDictionary<string, User> usersList = new Dictionary<string, User>();
                 foreach (var item in users)
                 {
-                    User user = (User)item.Object;
-                    usersList.Add(user.Username, user);
+                    User tempUser = (User)item.Object;
+                    usersList.Add(tempUser.Username, tempUser);
                 }
 
                 return usersList;
@@ -163,15 +154,33 @@ namespace ReminderForOthers.Model
             IDictionary<string, User> userDict = await GetUsers();
             return userDict.ContainsKey(username); //false (doesnt exists)
         }
+        public int UserDoesNotExist(User checkUser, IDictionary<string, User> usersList)
+        {
+            int userDoesntExist = 1; //1 means user doesnt exist
 
-        public async Task<User> GetUserFromUsernameAsync(string username) 
+            //check for username
+            if (usersList.ContainsKey(checkUser.Username))
+            {
+                userDoesntExist = 0;
+                return userDoesntExist;
+            }
+            //check for email
+            foreach (var item in usersList)
+            {
+                User tempUser = item.Value;
+                Console.WriteLine($"{tempUser.Username} : {user.Username}");
+                if (tempUser.Email == checkUser.Email) { userDoesntExist = -1; }
+            }
+            return userDoesntExist;
+        }
+        public async Task<User> GetUserFromUsernameAsync(string username)
         {
             IDictionary<string, User> userDict = await GetUsers();
             return userDict.TryGetValue(username, out User user) ? user : null;
         }
 
         //get users with key
-        public async Task<string> GetUserKeyAsync(User currentUser) 
+        public async Task<string> GetUserKeyAsync(User currentUser)
         {
             try
             {
@@ -179,12 +188,12 @@ namespace ReminderForOthers.Model
                 foreach (var item in users)
                 {
                     User temp = item.Object;
-                    if (temp.Username ==  currentUser.Username) 
+                    if (temp.Username == currentUser.Username)
                     {
-                        Console.WriteLine("Item key: "+item.Key);
+                        Console.WriteLine("Item key: " + item.Key);
                         return item.Key;
                     }
-                    
+
                 }
             }
             catch (Exception ex)
@@ -194,10 +203,11 @@ namespace ReminderForOthers.Model
             return "";
         }
 
-        public async Task<bool> UpdateUserInfoAsync(string key, User user) 
+        public async Task<bool> UpdateUserInfoAsync(string key, User user, bool isNewUsername)
         {
             try
             {
+                if (isNewUsername && UserDoesNotExist(user, await GetUsers()) < 1){ return false; }
                 await client.Child("Users").Child(key).PutAsync(user);
                 return true;
             }
@@ -206,7 +216,7 @@ namespace ReminderForOthers.Model
                 Console.WriteLine(ex.Message);
             }
             return false;
-            
+
         }
 
         //returns [-1 username doesnt exits, 0 password wrong, 1 password correct ] 

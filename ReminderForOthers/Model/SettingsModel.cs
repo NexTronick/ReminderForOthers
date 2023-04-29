@@ -46,6 +46,13 @@ namespace ReminderForOthers.Model
             return JsonConvert.DeserializeObject<SettingsService>(file);
         }
 
+        public void DeleteSettings()
+        {
+            if (!File.Exists(settingsPath)) { return; }
+            SetForegroundService(false);
+            File.Delete(settingsPath);
+        }
+
         public async Task<bool> LoadSettings() 
         {
             try

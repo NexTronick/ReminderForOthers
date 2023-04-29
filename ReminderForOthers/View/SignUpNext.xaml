@@ -77,6 +77,7 @@
                 Margin="5"
                 VerticalOptions="Center">
                 <Entry
+                    BackgroundColor="Transparent"
                     Placeholder="Min 4 and Max 16 characters"
                     Text="{Binding Username}"
                     VerticalOptions="Center" />
@@ -93,6 +94,7 @@
                 Margin="5"
                 VerticalOptions="Center">
                 <Entry
+                    BackgroundColor="Transparent"
                     Placeholder="eg. username@example.com"
                     Text="{Binding Email}"
                     VerticalOptions="Center" />
@@ -109,6 +111,7 @@
                 Margin="5"
                 VerticalOptions="Center">
                 <Entry
+                    BackgroundColor="Transparent"
                     FontSize="15"
                     IsPassword="True"
                     Placeholder="eg. Password1!"
@@ -127,6 +130,7 @@
                 Margin="5"
                 VerticalOptions="Center">
                 <Entry
+                    BackgroundColor="Transparent"
                     FontSize="15"
                     IsPassword="True"
                     Placeholder="eg. Password1!"

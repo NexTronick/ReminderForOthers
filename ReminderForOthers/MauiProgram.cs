@@ -7,6 +7,8 @@ using FirebaseAdmin;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Plugin.Maui.Audio;
 using Plugin.LocalNotification;
+using Microsoft.Maui.Controls;
+
 namespace ReminderForOthers;
 
 public static class MauiProgram
@@ -57,7 +59,8 @@ public static class MauiProgram
 #if IOS || ANDROID
 		builder.UseLocalNotification();
 #endif
-
+		
         return builder.Build();
 	}
+	
 }
