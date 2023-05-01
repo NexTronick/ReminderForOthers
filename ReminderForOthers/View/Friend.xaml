@@ -46,7 +46,7 @@
         <!--  Swipe from left to right for more accept/decline friend request  -->
         <Border
             Margin="15"
-            BackgroundColor="#3484ff"
+            BackgroundColor="#2b579a"
             HeightRequest="170"
             StrokeShape="RoundRectangle 0,40,40,0"
             StrokeThickness="2">
@@ -166,7 +166,7 @@
                                 <StackLayout>
                                     <Grid
                                         Padding="10"
-                                        BackgroundColor="#3484ff"
+                                        BackgroundColor="#2b579a"
                                         ColumnDefinitions="0.75*,0.25*"
                                         RowDefinitions="auto,auto">
                                         <Label
