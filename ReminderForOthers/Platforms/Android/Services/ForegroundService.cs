@@ -65,7 +65,7 @@ namespace ReminderForOthers.Platforms.Android.Services
                 notificationManager.CreateNotificationChannel(notificationChannel);
             }
      
-            var notificationBuilder = new NotificationCompat.Builder(this, channelID).SetContentTitle("ForegroundServiceStarted").SetSmallIcon(Resource.Mipmap.appicon).SetContentText("Service Running in Foreground").SetPriority(1).SetOngoing(true).SetChannelId(channelID).SetAutoCancel(true);
+            var notificationBuilder = new NotificationCompat.Builder(this, channelID).SetContentTitle("Play Reminder Service").SetSmallIcon(Resource.Drawable.app_logo).SetContentText("Running in Background.").SetPriority(1).SetOngoing(true).SetChannelId(channelID).SetAutoCancel(true);
             StartForeground(10001, notificationBuilder.Build());
             return base.OnStartCommand(intent, flags, startId);
         }
@@ -93,6 +93,7 @@ namespace ReminderForOthers.Platforms.Android.Services
         {
             var intent = new Intent(AndroidApp.Context, typeof(ForegroundService));
             AndroidApp.Context.StopService(intent);
+            reminderNotificationService = new ReminderNotificationService();
         }
 
         public bool IsForegroundServiceRunning()

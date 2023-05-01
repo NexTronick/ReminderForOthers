@@ -16,12 +16,13 @@ namespace ReminderForOthers.Model
         private static AudioPlayerService audioService = new AudioPlayerService();
         public static async void NotifyReminders(string key, Reminder reminder)
         {
+
             Random rnd = new Random();
             int notifyId = rnd.Next(1, 1000);
             DateTime notifyTime = reminder.PlayDateTime;
             if (reminder.PlayDateTime < DateTime.Now) 
             {
-                notifyTime = DateTime.Now.AddMinutes(1);
+                notifyTime = DateTime.Now.AddSeconds(3);
             }
 
             var request = new NotificationRequest
@@ -63,6 +64,7 @@ namespace ReminderForOthers.Model
             {
                 //need to add a loop where it shows its done or not before opening another thread.
                 Thread.Sleep(tenSecondsInMS);
+                //NotifyReminders(key, reminder);
                 recordModel.PlayDownloadedAudio(filePath.Result);
                 System.Diagnostics.Debug.WriteLine("Playing Audio");
 

@@ -133,6 +133,7 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         reminder.PlayDateTime = selectedDate.Date.AddTicks(selectedTime.Time.Ticks);
         reminder.RecordPath = recordModel.GetRecordPath();
         reminder.ReminderCreationTime = DateTime.Now;
+        reminder.HasPlayed = false;
 
         //store reminders
         ReminderModel reminderModel = new ReminderModel(reminder);

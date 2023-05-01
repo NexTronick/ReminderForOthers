@@ -17,6 +17,7 @@ namespace ReminderForOthers.Model
         public DateTime PlayDateTime { get; set; }
         public string RecordPath { get; set; }
         public DateTime ReminderCreationTime { get; set; }
+        public bool HasPlayed { get; set; }
     }
     public class ReminderModel
     {
@@ -50,7 +51,6 @@ namespace ReminderForOthers.Model
             //bool storedFlag = await AddReminderLocallyAsync();
             return await AddReminderCloudAsync();
         }
-
 
 
         //add reminder firebase realtime db
@@ -250,6 +250,26 @@ namespace ReminderForOthers.Model
                 return false;
             }
             return true;
+        }
+
+        //update reminder
+        public async Task<bool> UpdateReminderFirestore(string documentID, Reminder reminder) 
+        {
+            try
+            {
+                await CrossCloudFirestore.Current
+                          .Instance
+                          .Collection("reminder")
+                          .Document(documentID)
+                          .UpdateAsync(reminder);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return false;
         }
 
         //remove from database

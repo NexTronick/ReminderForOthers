@@ -4,6 +4,7 @@ using ReminderForOthers.Model;
 using ReminderForOthers.Services;
 using ReminderForOthers.ViewModel;
 using System.Linq;
+using static Android.Content.ClipData;
 
 namespace ReminderForOthers.Platforms.Android.Services
 {
@@ -14,7 +15,7 @@ namespace ReminderForOthers.Platforms.Android.Services
         private static ReminderModel reminderModel = new ReminderModel();
         private static AudioPlayerService audioService = new AudioPlayerService();
 
-        private IDictionary<string,Reminder> reminders = new Dictionary<string, Reminder>();
+        private IDictionary<string, Reminder> reminders = new Dictionary<string, Reminder>();
         private IDictionary<string, Reminder> reminded = new Dictionary<string, Reminder>();
 
         private static bool reminderStarted;
@@ -34,17 +35,17 @@ namespace ReminderForOthers.Platforms.Android.Services
                 while (reminderStarted)
                 {
                     System.Diagnostics.Debug.WriteLine("Run Get Reminder Service is Running");
-                    UpdateReminders();
-                    
+                    GetUpdatedReminders();
+
                     Thread.Sleep(intervalSec);
                 }
             });
         }
 
-        private void UpdateReminders()
+        private void GetUpdatedReminders()
         {
             System.Diagnostics.Debug.WriteLine("UpdateReminders started");
-           
+
             Task<IDictionary<string, Reminder>> tempReminders = reminderModel.GetReceivedRemindersAsync(loginModel.GetLogInCacheAsync().Result);
             if (reminders.Count == tempReminders.Result.Count) { return; }
             reminders = tempReminders.Result;
@@ -66,40 +67,16 @@ namespace ReminderForOthers.Platforms.Android.Services
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine("Play Audio  Error: "+ex.Message);
+                        System.Diagnostics.Debug.WriteLine("Play Audio  Error: " + ex.Message);
                     }
-                    
+
                 }
             });
         }
 
-        //private async void SetNotificationsAsync(int i,string documentID,Reminder reminder)
-        //{
-        //    var request = new NotificationRequest
-        //    {
-        //        NotificationId = 11111 + i,
-        //        Title = reminder.Title,
-        //        Subtitle = "Reminder",
-        //        Description = $"Remember to {reminder.Title}, from {reminder.UsernameFrom}",
-        //        BadgeNumber = 42,
-        //        Schedule = new NotificationRequestSchedule
-        //        {
-        //            NotifyTime = reminder.PlayDateTime
-        //            //NotifyRepeatInterval = TimeSpan.FromDays(1)
-        //        },
-        //        Android = new AndroidOptions 
-        //        {
-        //            LedColor =  213
-        //        }
-        //    };
-        //    Console.WriteLine($"Time: {reminder.PlayDateTime}");
-        //    await LocalNotificationCenter.Current.Show(request);
-        //    reminded.Add(documentID,reminder);
-        //}
 
         private void PlayNotificationAsync()
         {
-            int i=0;
             System.Diagnostics.Debug.WriteLine("PlayNotificationAsync started");
             foreach (var item in reminders)
             {
@@ -110,40 +87,49 @@ namespace ReminderForOthers.Platforms.Android.Services
                 int tenSeconds = 10;
                 TimeSpan reminderTime = new TimeSpan(reTemp.PlayDateTime.Ticks);
                 TimeSpan currentTime = new TimeSpan(DateTime.Now.Ticks);
-                
-                if (reminderTime.TotalSeconds - tenSeconds <= currentTime.TotalSeconds && !reminderIsPlaying)
+
+                if (reminderTime.TotalSeconds - tenSeconds <= currentTime.TotalSeconds && !reminderIsPlaying && !reTemp.HasPlayed)
                 {
-                    //make a reminder task and Notification
-                    NotificationModel.NotifyReminders(item.Key, reTemp);
-
-                    //Task<string> filePath = reminderModel.GetAudioFilePathAsync(reTemp.RecordPath);
-                    //Task.Run(() =>
-                    //{
-                    //    //need to add a loop where it shows its done or not before opening another thread.
-                    //    reminderIsPlaying = true;
-                    //    Thread.Sleep(1000 * tenSeconds);
-                    //    recordModel.PlayDownloadedAudio(filePath.Result);
-                    //    System.Diagnostics.Debug.WriteLine("Playing Audio");
-
-                    //});
-
-                    //Thread.Sleep(1000 * tenSeconds + audioService.AudioDuration(filePath.Result));
-                    ////remove from database
-                    //Task<bool> removed = reminderModel.RemoveReminderFirestore(item.Key, reTemp);
-
-                    //Play Notification
-                    reminderIsPlaying = true;
-                    int totalSleep = NotificationModel.SchedulePlay(item.Key, reTemp);
-                    Thread.Sleep(totalSleep);
-                    
-                    //update the current reminders
-                    UpdateReminders();
-                    System.Diagnostics.Debug.WriteLine("reminderTime Loop: "+i);
+                    PlayReminder(item.Key, reTemp);
                 }
-                i++;
+                else if (reminderTime.TotalSeconds - tenSeconds <= currentTime.TotalSeconds && !reminderIsPlaying && reTemp.HasPlayed)
+                {
+                    RemoveReminder(item.Key, reTemp);
+                }
             }
 
 
+        }
+
+        //remove reminder after a day
+        private async void RemoveReminder(string key, Reminder reminder) 
+        {
+            if (reminder.PlayDateTime.AddDays(1) > DateTime.Now) 
+            {
+                return;
+            }
+            await reminderModel.RemoveReminderFirestore(key, reminder);
+            GetUpdatedReminders();
+        }
+
+        //helper method to play reminder
+        private void PlayReminder(string key, Reminder reminder)
+        {
+            //make a reminder task and Notification
+            NotificationModel.NotifyReminders(key, reminder);
+
+            //Play Notification
+            reminderIsPlaying = true;
+            int totalSleep = NotificationModel.SchedulePlay(key, reminder);
+            Thread.Sleep(totalSleep);
+
+            //update the current reminders
+            reminder.HasPlayed = true;
+            reminderModel.UpdateReminderFirestore(key, reminder).Wait();
+
+            //get new updated reminders
+            GetUpdatedReminders();
+            reminderIsPlaying = false;
         }
 
         public void StartService()
