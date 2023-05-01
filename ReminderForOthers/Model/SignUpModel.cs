@@ -203,11 +203,10 @@ namespace ReminderForOthers.Model
             return "";
         }
 
-        public async Task<bool> UpdateUserInfoAsync(string key, User user, bool isNewUsername)
+        public async Task<bool> UpdateUserInfoAsync(string key, User user)
         {
             try
             {
-                if (isNewUsername && UserDoesNotExist(user, await GetUsers()) < 1){ return false; }
                 await client.Child("Users").Child(key).PutAsync(user);
                 return true;
             }

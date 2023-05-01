@@ -44,12 +44,12 @@ namespace ReminderForOthers.Platforms.Android.Services
 
         private void GetUpdatedReminders()
         {
-            System.Diagnostics.Debug.WriteLine("UpdateReminders started");
+            //System.Diagnostics.Debug.WriteLine("UpdateReminders started");
 
             Task<IDictionary<string, Reminder>> tempReminders = reminderModel.GetReceivedRemindersAsync(loginModel.GetLogInCacheAsync().Result);
             if (reminders.Count == tempReminders.Result.Count) { return; }
             reminders = tempReminders.Result;
-            System.Diagnostics.Debug.WriteLine("Result");
+            //System.Diagnostics.Debug.WriteLine("Result");
             //SetNotificationsAsync();
         }
 
@@ -61,8 +61,9 @@ namespace ReminderForOthers.Platforms.Android.Services
                 {
                     try
                     {
-                        System.Diagnostics.Debug.WriteLine("Run Play Reminder Service is Running");
-                        PlayNotificationAsync();
+                        //System.Diagnostics.Debug.WriteLine("Run Play Reminder Service is Running");
+                        PlayNotification();
+                        DeletePlayedReminders();
                         Thread.Sleep(intervalSec);
                     }
                     catch (Exception ex)
@@ -75,12 +76,12 @@ namespace ReminderForOthers.Platforms.Android.Services
         }
 
 
-        private void PlayNotificationAsync()
+        private void PlayNotification()
         {
-            System.Diagnostics.Debug.WriteLine("PlayNotificationAsync started");
+            //System.Diagnostics.Debug.WriteLine("PlayNotification started");
             foreach (var item in reminders)
             {
-                System.Diagnostics.Debug.WriteLine("Running Loop Audio");
+                //System.Diagnostics.Debug.WriteLine("Running Loop Audio");
                 Reminder reTemp = item.Value;
                 if (reminded.Contains(item)) { continue; } //if user has already reminded
 
@@ -100,6 +101,16 @@ namespace ReminderForOthers.Platforms.Android.Services
 
 
         }
+
+        //delete player used in loop
+        private void DeletePlayedReminders() 
+        {
+            foreach (var item in reminded)
+            {
+                Reminder reTemp = item.Value;
+                if (reTemp.HasPlayed) { RemoveReminder(item.Key, reTemp); }
+            }
+        } 
 
         //remove reminder after a day
         private async void RemoveReminder(string key, Reminder reminder) 

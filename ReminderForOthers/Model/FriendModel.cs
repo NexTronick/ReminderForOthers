@@ -68,10 +68,6 @@ namespace ReminderForOthers.Model
             return -2;
         }
 
-        // private async Task<IDictionary<string,FriendRequest>> GetAllFriendRequestsAsync() {
-        //    var friends = await client.Child("Friends").OnceAsync<FriendRequest>();
-        //    return friends;
-        // }
 
         //request async
         public async Task<IDictionary<string, FriendRequest>> GetFriendRequestDictionaryAsync(string username)

@@ -23,7 +23,7 @@ namespace ReminderForOthers.ViewModel
         public User User { get; set; }
         private string userKey;
         private User initialUser;
-
+       
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _foregroundChecked;
@@ -84,18 +84,17 @@ namespace ReminderForOthers.ViewModel
         public async void SaveSettingChanges()
         {
             SaveSettingService();
-            if (!await AreDetailsChangedValid()) { return; }
-            bool isNewUsername = User.Username != initialUser.Username;
+            if (!AreDetailsChangedValid()) { return; }
             User updatedUser = User;
-            
+
             //add new password
-            if (!string.IsNullOrEmpty(Password) && password == confirmPassword)
+            if (HasPasswordChangedValid())
             {
                 updatedUser.Password = signUpModel.ConvertToSHA256(Password);
             }
 
             bool isNewPassword = updatedUser.Password != initialUser.Password;
-            bool success = await signUpModel.UpdateUserInfoAsync(userKey, updatedUser, isNewUsername);
+            bool success = await signUpModel.UpdateUserInfoAsync(userKey, updatedUser);
 
             //failed
             if (!success)
@@ -105,14 +104,6 @@ namespace ReminderForOthers.ViewModel
             }
 
             //success
-
-            //different username
-            if (isNewUsername)
-            {
-                await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!\nFrom Username '" + initialUser.Username + "' to '" + User.Username + "'\nDirecting back to Login.", "Okay");
-                await LogoutUserAsync();
-                return;
-            }
             //login if password is changed
             if (isNewPassword)
             {
@@ -135,22 +126,29 @@ namespace ReminderForOthers.ViewModel
             }
         }
 
-        private async Task<bool> AreDetailsChangedValid()
+        private bool AreDetailsChangedValid()
         {
             //details are changed
-            if (initialUser.Username != User.Username ||
-                initialUser.Email != User.Email ||
-                initialUser.FirstName != User.FirstName ||
+            if (initialUser.FirstName != User.FirstName ||
                 initialUser.LastName != User.LastName ||
                 initialUser.BirthDate != User.BirthDate ||
-                !string.IsNullOrEmpty(Password) || !string.IsNullOrEmpty(confirmPassword))
+                HasPasswordChangedValid())
             {
                 SignUpViewModel signUpViewModel = new SignUpViewModel();
-                return signUpViewModel.ValidateUsersDetails(User, password, confirmPassword); //validate
+                return signUpViewModel.ValidateUsersDetails(User); //validate
             }
 
             //if no details changed
             return false;
+        }
+        private bool HasPasswordChangedValid()
+        {
+            if (!string.IsNullOrEmpty(Password) || !string.IsNullOrEmpty(ConfirmPassword))
+            {
+                SignUpViewModel signUpViewModel = new SignUpViewModel();
+                return signUpViewModel.IsPasswordValid(Password, ConfirmPassword);
+            }
+            return false;    //if no details changed
         }
 
         [RelayCommand]
