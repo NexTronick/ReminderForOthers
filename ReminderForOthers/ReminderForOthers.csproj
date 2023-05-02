@@ -137,6 +137,14 @@
     <AndroidSigningKeyAlias>ReminderForOthers</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>nex1619633695147</AndroidSigningKeyPass>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net6.0-android|AnyCPU'">
+    <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net6.0-android|AnyCPU'">
+    <AndroidEnableSGenConcurrent>True</AndroidEnableSGenConcurrent>
+  </PropertyGroup>
   
 	<ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionReminderForOthersHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 </Project>

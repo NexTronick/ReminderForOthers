@@ -107,6 +107,9 @@ namespace ReminderForOthers.Model
             return true;
         }
 
-
+        public bool GetisRecording()
+        {
+            return this.isRecording;
+        }
     }
 }

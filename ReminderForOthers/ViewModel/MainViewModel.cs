@@ -1,7 +1,8 @@
-
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Maui.Dispatching;
+using Microsoft.Maui.Layouts;
 using Plugin.AudioRecorder;
 using Plugin.SimpleAudioRecorder;
 using ReminderForOthers.Model;
@@ -31,6 +32,11 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
     //Recorder
     private RecordModel recordModel;
     private FriendModel friendModel;
+
+    //recording started
+    private int autoStopSec;
+    private bool recordStart;
+    private DateTime startedTime;
     public MainViewModel()
     {
         selectedDate.MinimumDate = DateTime.Today;
@@ -38,11 +44,13 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         selectedTime.Time = DateTime.Now.TimeOfDay;
         recordModel = new RecordModel();
         friendModel = new FriendModel();
+        autoStopSec = 40;
         LoadFriends();
+        RunTaskRecord();
 
     }
     //to load the friendslist gotten method from friendsVM
-    private async void LoadFriends() 
+    private async void LoadFriends()
     {
         LoginModel loginModel = new LoginModel();
         string currentUser = await loginModel.GetLogInCacheAsync();
@@ -55,6 +63,11 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
     [RelayCommand]
     async Task Record()
     {
+        if (recordStart)
+        {
+            await Shell.Current.DisplayAlert("Media Record Failed!", "The media may Have already started the recording. Try hitting the Reset button, before clicking on Record.", "Okay");
+            return;
+        }
         //first ask for permissions
         PermissionsModel permissionsModel = new PermissionsModel();
 
@@ -68,27 +81,79 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
 
         //record audio
         //record the voice
-        bool record = await recordModel.RecordAudioAsync();
-        if (!record)
+
+        recordStart = true;
+        startedTime = DateTime.Now;
+        //Task.Run(() => { AutoStopRecord(); });
+        await recordModel.RecordAudioAsync();
+
+
+    }
+
+    private async void RunTaskRecord()
+    {
+        Page currentPage = Shell.Current.CurrentPage;
+        await Task.Run(() =>
         {
-            await Shell.Current.DisplayAlert("Media Record Failed!", "The media may Have already started the recording. Try hitting the Reset button, before clicking on Record.", "Okay");
+            while (true)
+            {
+                Thread.Sleep(100);
+                //Console.WriteLine("Running Task");
+                if (!recordStart) { continue; }
+
+                if (startedTime.AddSeconds(autoStopSec) < DateTime.Now)
+                {
+                    
+                    try
+                    {
+                        StopRecord();
+                        MainThread.BeginInvokeOnMainThread(async() =>
+                        {
+                            await AutoStopRecord();
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        MainThread.BeginInvokeOnMainThread(async () =>
+                        {
+                            await Shell.Current.DisplayAlert("Error Has Occured", "Error occured in system, Please reopen Application!", "Okay");
+                        });
+                        Console.WriteLine(ex.Message);
+                    }
+                    
+                    Console.WriteLine("Running This");
+                    
+                }
+            }
+        });
+
+    }
+    private async Task AutoStopRecord()
+    {
+        bool response = await Shell.Current.DisplayAlert("Recording Automatically Stopped!", "Recording exceeds " + autoStopSec + " seconds!\nWould you like to Keep or Discard Recording?", "Keep", "Discard");
+        Console.WriteLine("Result: " + response);
+        if (!response)
+        {
+            DisposeRecordAudio();
         }
     }
 
     [RelayCommand]
-    async Task StopRecord()
+    async void StopRecord()
     {
         bool record = await recordModel.StopRecordAudioAsync();
         if (!record)
         {
             await Shell.Current.DisplayAlert("Media Record Failed!", "The media may Not Have started the recording. Try hitting the Reset button, before clicking on Record.", "Okay");
         }
+        recordStart = false;
     }
 
     [RelayCommand]
-    async Task DisposeRecordAudio()
+    async void DisposeRecordAudio()
     {
         await recordModel.DisposeAudioAsync();
+        recordStart = false;
     }
 
     [RelayCommand]
@@ -141,12 +206,12 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         if (stored)
         {
 
-           
+
             userToIndex = 0;
             title = "";
             selectedDate.Date = DateTime.Now;
             selectedTime.Time = DateTime.Now.TimeOfDay;
-            await DisposeRecordAudio();
+            DisposeRecordAudio();
             await Shell.Current.GoToAsync("//Home//" + nameof(PersonalReminders));
             await App.Current.MainPage.DisplayAlert("Reminder Set", "Reminder is successfully set.", "Okay");
         }
@@ -195,14 +260,14 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         string cache = await loginModel.GetLogInCacheAsync();
         return cache;
     }
-    
+
     [RelayCommand]
     public async Task CheckMyReminders()
     {
-        await Shell.Current.GoToAsync("//Home//"+nameof(PersonalReminders));
+        await Shell.Current.GoToAsync("//Home//" + nameof(PersonalReminders));
     }
 
-    
+
 
     //default navigations
 
