@@ -88,12 +88,14 @@ namespace ReminderForOthers.ViewModel
             User updatedUser = User;
 
             //add new password
+            bool isNewPassword = false;
             if (HasPasswordChangedValid())
             {
                 updatedUser.Password = signUpModel.ConvertToSHA256(Password);
+                isNewPassword = true;
             }
 
-            bool isNewPassword = updatedUser.Password != initialUser.Password;
+           
             bool success = await signUpModel.UpdateUserInfoAsync(userKey, updatedUser);
 
             //failed
@@ -107,13 +109,16 @@ namespace ReminderForOthers.ViewModel
             //login if password is changed
             if (isNewPassword)
             {
-                await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!\nPassword was updated!\nDirecting back to Login.", "Okay");
+                await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!\nPassword has been updated!\nDirecting back to Login.", "Okay");
                 await LogoutUserAsync();
                 return;
             }
             //update the new user info
             SetCurrentUser();
-            await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!", "Okay");
+            if (!isNewPassword) {
+                await Shell.Current.DisplayAlert("Account Settings", "Account Settings are Updated!", "Okay");
+            }
+            
         }
 
         private async void SaveSettingService()
