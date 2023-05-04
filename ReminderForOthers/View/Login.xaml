@@ -94,7 +94,7 @@
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
                         HorizontalTextAlignment="Center"
-                        Text="Check the Box to save the account details."
+                        Text="Remember the password to stay logged in."
                         VerticalTextAlignment="Center">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding CheckBoxTickCommand}" />
@@ -128,8 +128,6 @@
 
                 </Grid>
 
-
-                <!--<Button  Text="Sign Up Now" Command="{Binding SignUpNowCommand}" />-->
             </Grid>
             <Button
                 Grid.Row="4"
@@ -139,18 +137,9 @@
                 Command="{Binding LoginUserCommand}"
                 FontSize="18"
                 Text="Login" />
-            <!--<Label
-                x:Name="showLabel"
-                Grid.Row="5"
-                Grid.ColumnSpan="2"
-                FontSize="15"
-                 />-->
+
         </Grid>
-        <!--<BoxView VerticalOptions="FillAndExpand" Color="Transparent" />
-        <BoxView
-            HeightRequest="50"
-            VerticalOptions="End"
-            Color="Blue" />-->
+
     </StackLayout>
 
 </ContentPage>

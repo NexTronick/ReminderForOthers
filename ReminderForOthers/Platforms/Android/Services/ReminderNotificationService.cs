@@ -126,21 +126,30 @@ namespace ReminderForOthers.Platforms.Android.Services
         //helper method to play reminder
         private void PlayReminder(string key, Reminder reminder)
         {
-            //make a reminder task and Notification
-            NotificationModel.NotifyReminders(key, reminder);
+            try
+            {
+                reminderIsPlaying = true;
+                //make a reminder task and Notification
+                NotificationModel.NotifyReminders(key, reminder);
 
-            //Play Notification
-            reminderIsPlaying = true;
-            int totalSleep = NotificationModel.SchedulePlay(key, reminder);
-            Thread.Sleep(totalSleep);
+                //Play Notification
+                int totalSleepSec = NotificationModel.SchedulePlay(key, reminder);
+                Thread.Sleep(totalSleepSec);
 
-            //update the current reminders
-            reminder.HasPlayed = true;
-            reminderModel.UpdateReminderFirestore(key, reminder).Wait();
+                //update the current reminders
+                reminder.HasPlayed = true;
+                reminderModel.UpdateReminderFirestore(key, reminder).Wait();
 
-            //get new updated reminders
-            GetUpdatedReminders();
-            reminderIsPlaying = false;
+                //get new updated reminders
+                GetUpdatedReminders();
+                reminderIsPlaying = false;
+            }
+            catch (Exception ex)
+            {
+
+                Console.WriteLine(ex.Message);
+            }
+            
         }
 
         public void StartService()

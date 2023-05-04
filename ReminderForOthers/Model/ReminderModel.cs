@@ -188,14 +188,37 @@ namespace ReminderForOthers.Model
         //get audio from cloud
         public async Task<string> GetAudioFilePathAsync(string path)
         {
-            string fileName = path.Split("/")[1];
+            string fileName = path.Split("/")[2];
             string filePath = Path.Combine(FileSystem.Current.CacheDirectory, fileName);
+            if (File.Exists(filePath)) { return filePath; }
 
             try
             {
                 var reference = CrossFirebaseStorage.Current.Instance.RootReference.Child(path);
-                await reference.GetFileAsync(filePath);
+                var downloadProgress = new Progress<IDownloadState>();
+                downloadProgress.ProgressChanged += (sender, e) =>
+                {
+                    var progress = e.TotalByteCount > 0 ? 100.0 * e.BytesTransferred / e.TotalByteCount : 0;
+                    Console.WriteLine("Download: "+progress);
+                };
+                
+                Task.WaitAny(reference.GetFileAsync(filePath, downloadProgress));
+                MainThread.BeginInvokeOnMainThread(async() =>
+                {
+                    await Shell.Current.DisplayAlert("Starting to play", "Please wait as the file need to be downloaded.", "okay");
+                });
+
+                
+                //var stream = await reference.GetStreamAsync(downloadProgress);
+
+                //var reader = new StreamReader(stream);
+                //var content = reader.ReadToEnd();
+
+                //StreamWriter writer = new StreamWriter();
+                //Thread.Sleep(1000);
                 //Console.WriteLine("Reference: " + reference.Name);
+                //Console.WriteLine("passed it");
+                //Console.WriteLine(fileName);
             }
             catch (Exception ex)
             {

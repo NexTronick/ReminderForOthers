@@ -110,10 +110,14 @@ namespace ReminderForOthers.ViewModel
         [RelayCommand]
         public async void PlayReminderAsync(string recordPath)
         {
-            //Console.WriteLine("RecordPath: "+recordPath);
-            string filePath = await reminderModel.GetAudioFilePathAsync(recordPath);
-            //Console.WriteLine("File duration: "+ReminderAudio.AudioDuration(filePath));
-            recordModel.PlayDownloadedAudio(filePath);
+        
+            await Task.Run(async() => {
+                Console.WriteLine("RecordPath: " + recordPath);
+                string filePath = await reminderModel.GetAudioFilePathAsync(recordPath);
+                Console.WriteLine("FullFile: " + filePath);
+                recordModel.PlayDownloadedAudio(filePath);
+            });
+            
         }
 
         //default navigations

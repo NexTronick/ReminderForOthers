@@ -23,6 +23,10 @@ namespace ReminderForOthers.Model
             audioService = new AudioPlayerService();
             isRecording = false;
             hasRecordedAudio=false;
+            player.FinishedPlaying += (s, e) =>
+            {
+                audioService.PlayStopRecordAudio();
+            };
         }
 
         public async Task<bool> RecordAudioAsync()
@@ -102,8 +106,9 @@ namespace ReminderForOthers.Model
             if (!File.Exists(filePath)) { return false; }
             audioService.PlayStartRecordAudio();
             player.Play(filePath);
-            Thread.Sleep(audioService.AudioDuration(filePath));
-            audioService.PlayStopRecordAudio();
+            
+            //Thread.Sleep(audioService.AudioDuration(filePath));
+           
             return true;
         }
 

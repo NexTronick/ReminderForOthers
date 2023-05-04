@@ -7,14 +7,17 @@ public partial class App : Application
 {
     private LoginModel loginModel;
     private SettingsModel settingsModel;
-	public App()
-	{
-		InitializeComponent();
-		MainPage = new AppShell();
+    private PermissionsModel permissionsModel;
+
+    public App()
+    {
+        InitializeComponent();
+        MainPage = new AppShell();
         loginModel = new LoginModel();
         settingsModel = new SettingsModel();
+        permissionsModel = new PermissionsModel();
         CheckUserLoggedIn();
-        
+
     }
     private async void CheckUserLoggedIn()
     {
@@ -24,12 +27,13 @@ public partial class App : Application
             //Shell.SetTabBarIsVisible(this, loggedIn);
             await Shell.Current.GoToAsync("//Login");
         }
-        else {
+        else
+        {
             await Shell.Current.GoToAsync("//Home");
             LoadSettingsServices();
         }
     }
-    private async void LoadSettingsServices() 
+    private async void LoadSettingsServices()
     {
         await settingsModel.LoadSettings();
     }
@@ -43,11 +47,18 @@ public partial class App : Application
             //System.Diagnostics.Debug.WriteLine("=========Stopped");
             SettingsChangedWithStop(true);
         };
-
+        window.Activated += (s, e) =>
+        {
+            ActivatedWindow();
+        };
         return window;
     }
 
-    private async void SettingsChangedWithStop(bool isStopped) 
+    private async void ActivatedWindow() 
+    {
+        await permissionsModel.AskRequiredPermissionsAsync();
+    }
+    private async void SettingsChangedWithStop(bool isStopped)
     {
         //if user has saved its data then exit code
         string username = await loginModel.GetStartLoginInfoAsync();

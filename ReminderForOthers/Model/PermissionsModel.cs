@@ -17,7 +17,6 @@ namespace ReminderForOthers.Model
             bool pMic = await AskForPermissionsAsync(PermissionsType.MIC);
             bool pRead = await AskForPermissionsAsync(PermissionsType.S_READ);
             bool pWrite = await AskForPermissionsAsync(PermissionsType.S_WRITE);
-
             return (pMic == true? (pRead == true? (pWrite == true? true : false): false) : false);
         }
 

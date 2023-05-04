@@ -69,7 +69,7 @@ namespace ReminderForOthers.Model
                 System.Diagnostics.Debug.WriteLine("Playing Audio");
 
             });
-            int totalSleep = tenSecondsInMS + audioService.AudioDuration(filePath.Result);
+            int totalSleep = tenSecondsInMS + (1000* audioService.AudioDuration(filePath.Result));
             Thread.Sleep(totalSleep);
             return totalSleep;
         }
