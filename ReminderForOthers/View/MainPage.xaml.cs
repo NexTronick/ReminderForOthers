@@ -12,6 +12,8 @@ public partial class MainPage : ContentPage
         InitializeComponent();
         BindingContext = new MainViewModel();
         //Shell.SetNavBarIsVisible(this, false);
+        PermissionsModel permissionsModel = new PermissionsModel();
+        Task<bool> run = permissionsModel.AskRequiredPermissionsAsync();
     }
     protected override void OnAppearing()
     {

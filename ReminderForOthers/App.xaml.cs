@@ -47,17 +47,11 @@ public partial class App : Application
             //System.Diagnostics.Debug.WriteLine("=========Stopped");
             SettingsChangedWithStop(true);
         };
-        window.Activated += (s, e) =>
-        {
-            ActivatedWindow();
-        };
+        
         return window;
     }
 
-    private async void ActivatedWindow() 
-    {
-        await permissionsModel.AskRequiredPermissionsAsync();
-    }
+
     private async void SettingsChangedWithStop(bool isStopped)
     {
         //if user has saved its data then exit code

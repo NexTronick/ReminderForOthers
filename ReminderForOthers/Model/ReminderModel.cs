@@ -203,22 +203,12 @@ namespace ReminderForOthers.Model
                 };
                 
                 Task.WaitAny(reference.GetFileAsync(filePath, downloadProgress));
-                MainThread.BeginInvokeOnMainThread(async() =>
-                {
-                    await Shell.Current.DisplayAlert("Starting to play", "Please wait as the file need to be downloaded.", "okay");
-                });
+                //MainThread.BeginInvokeOnMainThread(async() =>
+                //{
+                //    await Shell.Current.DisplayAlert("Starting to play", "Please wait as the file need to be downloaded.", "okay");
+                //});
 
                 
-                //var stream = await reference.GetStreamAsync(downloadProgress);
-
-                //var reader = new StreamReader(stream);
-                //var content = reader.ReadToEnd();
-
-                //StreamWriter writer = new StreamWriter();
-                //Thread.Sleep(1000);
-                //Console.WriteLine("Reference: " + reference.Name);
-                //Console.WriteLine("passed it");
-                //Console.WriteLine(fileName);
             }
             catch (Exception ex)
             {

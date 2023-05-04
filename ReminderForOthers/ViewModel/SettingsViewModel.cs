@@ -50,12 +50,6 @@ namespace ReminderForOthers.ViewModel
             SetInitialValues();
             SetCurrentUser();
             SetInitialSettings();
-            App.Window.Stopped += (s, e) =>
-            {
-                SetInitialValues();
-                SetCurrentUser();
-                SetInitialSettings();
-            };
         }
 
         [RelayCommand]
@@ -67,6 +61,7 @@ namespace ReminderForOthers.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ConfirmPassword)));
 
         }
+        [RelayCommand]
         public async void SetInitialSettings()
         {
             SettingsService settingsService = await settingsModel.ReadSettings();
@@ -189,16 +184,6 @@ namespace ReminderForOthers.ViewModel
             SetInitialSettings();
             await Shell.Current.GoToAsync("//Login");
         }
-
-        //public async Task GotoLoginPageAsync()
-        //{
-        //    //move to login page
-        //    if (string.IsNullOrEmpty(currentUser))
-        //    {
-        //        await Shell.Current.GoToAsync("//Login");
-        //    }
-        //    //await Shell.Current.GoToAsync(nameof(Login));
-        //}
 
 
     }

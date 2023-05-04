@@ -100,7 +100,7 @@
                                             Grid.Row="1"
                                             Grid.Column="0"
                                             FontSize="16"
-                                            Text="{Binding RequestDate.Date}"
+                                            Text="{Binding RequestDate.Date, StringFormat='{0:dd/MM/yyyy}'}"
                                             TextColor="White" />
                                     </Grid>
 
@@ -177,7 +177,7 @@
                                         <Label
                                             Grid.Row="1"
                                             Grid.Column="0"
-                                            Text="{Binding RequestDate.Date}"
+                                            Text="{Binding RequestDate.Date, StringFormat='{0:dd/MM/yyyy}'}"
                                             TextColor="White" />
                                     </Grid>
                                 </StackLayout>

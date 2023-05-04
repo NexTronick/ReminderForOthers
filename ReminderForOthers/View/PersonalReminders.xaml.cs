@@ -9,6 +9,8 @@ public partial class PersonalReminders : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = new PersonalReminderViewModel();
+        PermissionsModel permissionsModel = new PermissionsModel();
+        Task<bool> run = permissionsModel.AskRequiredPermissionsAsync();
         //Shell.SetNavBarIsVisible(this, false);
     }
 	protected override void OnAppearing()
