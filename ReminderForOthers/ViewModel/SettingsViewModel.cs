@@ -50,6 +50,12 @@ namespace ReminderForOthers.ViewModel
             SetInitialValues();
             SetCurrentUser();
             SetInitialSettings();
+            App.Window.Stopped += (s, e) =>
+            {
+                SetInitialValues();
+                SetCurrentUser();
+                SetInitialSettings();
+            };
         }
 
         [RelayCommand]

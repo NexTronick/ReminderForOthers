@@ -7,7 +7,6 @@ public partial class App : Application
 {
     private LoginModel loginModel;
     private SettingsModel settingsModel;
-
 	public App()
 	{
 		InitializeComponent();
@@ -44,7 +43,6 @@ public partial class App : Application
             //System.Diagnostics.Debug.WriteLine("=========Stopped");
             SettingsChangedWithStop(true);
         };
-        
 
         return window;
     }
@@ -62,5 +60,6 @@ public partial class App : Application
         //toggle forground service for future
         settingsService.ForegroundServiceOn = !isStopped;
         await settingsModel.WriteSettings(settingsService);
+        await settingsModel.LoadSettings();
     }
 }

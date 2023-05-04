@@ -8,11 +8,18 @@ public partial class Settings : ContentPage
 	{
 		InitializeComponent();
 		BindingContext = new SettingsViewModel();
+        App.Window.Stopped += (s, e) =>
+        {
+            BindingContext = new SettingsViewModel();
+        };
     }
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
-		((SettingsViewModel)BindingContext).SetCurrentUserCommand.Execute(this);
-		((SettingsViewModel)BindingContext).SetInitialValuesCommand.Execute(this);
+        BindingContext = new SettingsViewModel();
+  //      ((SettingsViewModel)BindingContext).SetCurrentUserCommand.Execute(this);
+		//((SettingsViewModel)BindingContext).SetInitialValuesCommand.Execute(this);
+  //      ((SettingsViewModel)BindingContext).SetInitialValuesCommand.Execute(this);
+       
     }
 }

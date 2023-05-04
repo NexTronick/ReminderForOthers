@@ -159,7 +159,7 @@ public partial class SignUpViewModel : ObservableObject
     [RelayCommand]
     async Task HasAccountFromSignUpNext()
     {
-        await Shell.Current.GoToAsync("../..");
+        await Shell.Current.GoToAsync(nameof(Login));
     }
 
 
@@ -169,7 +169,7 @@ public partial class SignUpViewModel : ObservableObject
         int stored = await signUpModel.StoreUserAsync();
         //test json deserilize
         //Task<IDictionary<string,User>> userData= signUpModel.GetLocalUsers();
-        ClearSignUpData();
+        
         return stored;
     }
 
