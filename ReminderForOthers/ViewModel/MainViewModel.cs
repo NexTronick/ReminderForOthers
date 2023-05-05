@@ -46,7 +46,6 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         friendModel = new FriendModel();
         autoStopSec = 40;
         LoadFriends();
-        RunTaskRecord();
 
     }
     //to load the friendslist gotten method from friendsVM
@@ -61,7 +60,7 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
     }
 
     [RelayCommand]
-    async Task Record()
+    async void Record()
     {
         if (recordStart)
         {
@@ -86,7 +85,7 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         startedTime = DateTime.Now;
         //Task.Run(() => { AutoStopRecord(); });
         await recordModel.RecordAudioAsync();
-
+        RunTaskRecord();
 
     }
 
@@ -95,9 +94,9 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         Page currentPage = Shell.Current.CurrentPage;
         await Task.Run(() =>
         {
-            while (true)
+            while (recordStart)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 //Console.WriteLine("Running Task");
                 if (!recordStart) { continue; }
 

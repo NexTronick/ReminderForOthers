@@ -66,7 +66,7 @@ namespace ReminderForOthers.Services
                 int duration = Convert.ToInt32(players[index].Duration);
                 Thread.Sleep(1000 * duration);
                 players[index].Stop();
-                players[index].Dispose();
+                //players[index].Dispose();
                 players[index] = null;
             }
             catch (Exception ex)

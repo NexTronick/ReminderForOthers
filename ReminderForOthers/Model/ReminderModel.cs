@@ -89,7 +89,7 @@ namespace ReminderForOthers.Model
         }
 
         //get reminder that user sent
-        public async Task<IDictionary<string,Reminder>> GetSentRemindersAsync(string userFrom)
+        public async Task<IDictionary<string, Reminder>> GetSentRemindersAsync(string userFrom)
         {
             var queryUserFrom = await CrossCloudFirestore.Current
                                                  .Instance
@@ -117,12 +117,14 @@ namespace ReminderForOthers.Model
         {
             for (int i = 0; i < reminders.Length; i++)
             {
+                
                 for (int j = reminders.Length - 1; j > i; j--)
                 {
                     Console.WriteLine("Reminder: " + reminders[i].PlayDateTime);
                     //Console.WriteLine($"Before switch, Reminder i:{reminders[i].Id}, Reminder j: {reminders[j].Id}");
                     if (reminders[i].PlayDateTime >= reminders[j].PlayDateTime)
                     {
+                        if (!reminders[i].HasPlayed) { continue; }
                         //rearrange reminder
                         Reminder reTemp = reminders[i];
                         reminders[i] = reminders[j];
@@ -138,12 +140,12 @@ namespace ReminderForOthers.Model
                 }
             }
 
-            return ConvertToDictionary(documentIDs,reminders);
+            return ConvertToDictionary(documentIDs, reminders);
         }
 
 
         //conver to IDictionary
-        private IDictionary<string, Reminder> ConvertToDictionary(string[] documentIDs, Reminder[] reminders) 
+        private IDictionary<string, Reminder> ConvertToDictionary(string[] documentIDs, Reminder[] reminders)
         {
             IDictionary<string, Reminder> remindersDic = new Dictionary<string, Reminder>();
 
@@ -199,16 +201,16 @@ namespace ReminderForOthers.Model
                 downloadProgress.ProgressChanged += (sender, e) =>
                 {
                     var progress = e.TotalByteCount > 0 ? 100.0 * e.BytesTransferred / e.TotalByteCount : 0;
-                    Console.WriteLine("Download: "+progress);
+                    Console.WriteLine("Download: " + progress);
                 };
-                
+
                 Task.WaitAny(reference.GetFileAsync(filePath, downloadProgress));
                 //MainThread.BeginInvokeOnMainThread(async() =>
                 //{
                 //    await Shell.Current.DisplayAlert("Starting to play", "Please wait as the file need to be downloaded.", "okay");
                 //});
 
-                
+
             }
             catch (Exception ex)
             {
@@ -266,7 +268,7 @@ namespace ReminderForOthers.Model
         }
 
         //update reminder
-        public async Task<bool> UpdateReminderFirestore(string documentID, Reminder reminder) 
+        public async Task<bool> UpdateReminderFirestore(string documentID, Reminder reminder)
         {
             try
             {

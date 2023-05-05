@@ -25,8 +25,14 @@ namespace ReminderForOthers.Model
             hasRecordedAudio=false;
             player.FinishedPlaying += (s, e) =>
             {
-                audioService.PlayStopRecordAudio();
+                FinishedPlayingAudio();
             };
+        }
+
+        public async void FinishedPlayingAudio() 
+        {
+            AudioPlayerService audioPlayerService = new AudioPlayerService();
+            audioPlayerService.PlayStopRecordAudio();
         }
 
         public async Task<bool> RecordAudioAsync()
