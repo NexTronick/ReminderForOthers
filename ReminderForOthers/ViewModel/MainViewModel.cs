@@ -60,7 +60,7 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
     }
 
     [RelayCommand]
-    async void Record()
+    async Task Record()
     {
         if (recordStart)
         {
@@ -84,8 +84,8 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         recordStart = true;
         startedTime = DateTime.Now;
         //Task.Run(() => { AutoStopRecord(); });
-        await recordModel.RecordAudioAsync();
         RunTaskRecord();
+        await recordModel.RecordAudioAsync();
 
     }
 
@@ -96,7 +96,7 @@ public partial class MainViewModel : ObservableObject, INotifyPropertyChanged
         {
             while (recordStart)
             {
-                Thread.Sleep(1000);
+                //Thread.Sleep(1000);
                 //Console.WriteLine("Running Task");
                 if (!recordStart) { continue; }
 
