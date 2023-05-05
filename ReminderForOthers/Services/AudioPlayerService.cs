@@ -94,16 +94,5 @@ namespace ReminderForOthers.Services
             return 0;
         }
 
-        public void EnableBackgroundAudio()
-        {
-
-//#if ANDROID
-//            //enable the background audio 
-//            Android.Media.Session.MediaSessionManager manager;
-//            manager
-//            Android.Media.Session.PlaybackStateCode.Playing;
-            
-//#endif
-        }
     }
 }
