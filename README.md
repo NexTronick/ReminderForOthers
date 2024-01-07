@@ -1,5 +1,5 @@
 ## Final Year Project
-#### Allows users to send reminders to other users using the voice memo.
+Allows users to send reminders to other users using the voice memo.
 
 ### Description:
 
